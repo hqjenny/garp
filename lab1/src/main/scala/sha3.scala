@@ -50,6 +50,6 @@ class Sha3AccelTests(c: Sha3Accel) extends Tester(c) {
 object Sha3AccelMain {
   def main(args: Array[String]): Unit = {
     chiselMainTest(args, () => Module(new Sha3Accel(64))){
-                c => new Sha3AccelTests(c)}
-              }
-            }
+      c => new Sha3AccelTests(c)}
+  }
+}
