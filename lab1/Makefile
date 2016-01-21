@@ -19,6 +19,9 @@ emulator: $(emulator_timestamp)
 run-unit: $(src_files)
 	sbt "run --test --genHarness --compile --backend c --targetDir build/emulator/generated-src"
 
+run-unit-vlsi: $(src_files)
+	sbt "run --test --genHarness --compile --backend v --targetDir build/vlsi/generated-src"
+
 run-emulator: emulator
 	sbt "run-main sha3.Sha3AccelMain --test --targetDir build/emulator/generated-src"
 	
@@ -42,6 +45,6 @@ run-vlsi-report: $(src_files)
 	sbt "run-main sha3.Sha3AccelMain --test --genHarness --compile --backend v --targetDir build/vlsi/generated-src" > build/vlsi/vcs-report
 
 clean:
-	rm -rf build/vlsi/generated-src/* build/emulator/generated-src/* target project csrc ucli.key
+	rm -rf build/vlsi/generated-src/* build/emulator/generated-src/* target csrc ucli.key
 
 .PHONY: vlsi emulator
