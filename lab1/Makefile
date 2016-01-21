@@ -22,6 +22,9 @@ run-unit: $(src_files)
 run-unit-vlsi: $(src_files)
 	sbt "run --test --genHarness --compile --backend v --targetDir build/vlsi/generated-src"
 
+run-unit-vlsi-vpd: $(src_files)
+	sbt "run --test --genHarness --compile --backend v --targetDir build/vlsi/generated-src --vcd"
+
 run-emulator: emulator
 	sbt "run-main sha3.Sha3AccelMain --test --targetDir build/emulator/generated-src"
 	
@@ -39,7 +42,7 @@ run-vlsi: $(src_files)
 	sbt "run-main sha3.Sha3AccelMain --test --genHarness --compile --backend v --targetDir build/vlsi/generated-src"
 
 run-vlsi-vpd: $(src_files)
-	sbt "run-main sha3.Sha3AccelMain --test --debug --genHarness --compile --backend v --targetDir build/vlsi/generated-src"
+	sbt "run-main sha3.Sha3AccelMain --test --debug --genHarness --compile --backend v --targetDir build/vlsi/generated-src --vcd"
 
 run-vlsi-report: $(src_files)
 	sbt "run-main sha3.Sha3AccelMain --test --genHarness --compile --backend v --targetDir build/vlsi/generated-src" > build/vlsi/vcs-report
