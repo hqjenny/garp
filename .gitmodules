@@ -1,3 +1,12 @@
 [submodule "chisel"]
 	path = chisel
 	url = https://github.com/ucb-bar/chisel.git
+[submodule "lab2/chisel"]
+	path = lab2/chisel
+	url = git@github.com:ucberkeley-cs250/chisel.git
+[submodule "lab2/context-dependent-environments"]
+	path = lab2/context-dependent-environments
+	url = git@github.com:ucberkeley-cs250/context-dependent-environments.git
+[submodule "lab2/jackhammer"]
+	path = lab2/jackhammer
+	url = git@github.com:ucberkeley-cs250/jackhammer.git
