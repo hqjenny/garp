@@ -59,7 +59,7 @@ run-vlsi-vpd: $(src_files)
 	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --debug --genHarness --compile --backend v --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/generated-src"
 
 run-vlsi-report: $(src_files)
-	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) -test --genHarness --compile --backend v --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/generated-src" > build/vlsi/vcs-report
+	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --genHarness --compile --backend v --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/generated-src" > build/vlsi/vcs-report
 
 config: $(src_files)
 	run-main sha3.Sha3AccelConfigCollect $(PROJ) $(MODULE) $(CONFIG) src/main/scala/config --genHarness --compile --configInstance $(PROJ).$(CONFIG) --backend c --targetDir src/main/scala/config
