@@ -59,7 +59,7 @@ class Sha3Accel()(implicit p: Parameters) extends SimpleRoCC()(p) {
   ctrl.io.write <> dpath.io.write
 }
 
-class Sha3AccelTests(c: Sha3Accel) extends AdvTester(c) {
+class Sha3AccelTests(c: Sha3Accel, isTrace:Boolean = false) extends AdvTester(c, isTrace) {
   // Setup the IO handlers
   val Cmd_IHandler     = new DecoupledSource(c.io.cmd, (sckt: RoCCCommand, in: TestCmd) => in.inject(this, sckt))
   val Resp_OHandler    = new DecoupledSink(c.io.resp, (sckt: RoCCResponse) => TestResp.extract(this, sckt))
@@ -85,8 +85,7 @@ class Sha3AccelTests(c: Sha3Accel) extends AdvTester(c) {
   takestep()
   //Setup memory
   instantMemory.store_data(0, Array.fill(17){BigInt(0)})
-  //turn tracing on
-  //isTrace =true;
+  
   //insert both RoCC commands
   Cmd_IHandler.inputs.enqueue(TestCmd.addr(0,1024))
   Cmd_IHandler.inputs.enqueue(TestCmd.len(17*8))
@@ -275,6 +274,7 @@ object Sha3AccelMain{
     val world = config.toInstance
     val paramsFromConfig: Parameters = Parameters.root(world)
 
-    chiselMainTest(args.drop(3), () => Module(new Sha3Accel()(paramsFromConfig))){c => new Sha3AccelTests(c)}
+    //Set isTrace to true to enable peek/poke printing
+    chiselMainTest(args.drop(3), () => Module(new Sha3Accel()(paramsFromConfig))){c => new Sha3AccelTests(c, isTrace = false)}
   }
 }
