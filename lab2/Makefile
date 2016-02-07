@@ -23,7 +23,7 @@ $(emulator_timestamp): $(src_files)
 emulator: $(emulator_timestamp)
 
 run-unit: $(src_files)
-	sbt "run --test --genHarness --compile --backend c --targetDir build/emulator/generated-src"
+	sbt "run --test  --genHarness --compile --backend c --targetDir build/emulator/generated-src"
 
 run-emulator: emulator
 	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --configInstance $(PROJ).$(CONFIG) --targetDir build/emulator/generated-src"
@@ -49,7 +49,7 @@ run-vlsi-syn: $(src_files) vlsi
 run-vlsi-syn-report: $(src_files) vlsi
 	cd build/vlsi/vcs-sim-gl-syn && make CONFIG=$(CONFIG)
 	cd ../../..
-	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --debug --backend v --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand build/vlsi/$(PROJ).$(CONFIG)" > build/vlsi/vcs-syn-report
+	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand build/vlsi/vcs-sim-gl-syn/$(MODULE)" > build/vlsi/vcs-syn-report
 
 
 run-vlsi: $(src_files) vlsi
