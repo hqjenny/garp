@@ -46,6 +46,11 @@ run-vlsi-syn: $(src_files) vlsi
 	cd ../../..
 	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand build/vlsi/vcs-sim-gl-syn/$(MODULE)"
 
+run-vlsi-syn-vpd: $(src_files) vlsi
+	cd build/vlsi/vcs-sim-gl-syn && make CONFIG=$(CONFIG)
+	cd ../../..
+	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand build/vlsi/vcs-sim-gl-syn/$(MODULE) +vcdfile=build/vlsi/vcs-sim-gl-syn/Sha3Accel.vcd"
+
 run-vlsi-syn-report: $(src_files) vlsi
 	cd build/vlsi/vcs-sim-gl-syn && make CONFIG=$(CONFIG)
 	cd ../../..
@@ -55,8 +60,8 @@ run-vlsi-syn-report: $(src_files) vlsi
 run-vlsi: $(src_files) vlsi
 	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --debug --test --backend v --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/generated-src"
 
-run-vlsi-vpd: $(src_files)
-	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --debug --genHarness --compile --backend v --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/generated-src"
+run-vlsi-vpd: $(src_files) vlsi
+	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --vcd --debug --genHarness --compile --backend v --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/generated-src"
 
 run-vlsi-report: $(src_files) vlsi
 	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --debug --test --backend v --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/generated-src" > build/vlsi/vcs-report
