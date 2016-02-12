@@ -44,17 +44,17 @@ vlsi: $(vlsi_timestamp)
 run-vlsi-syn: $(src_files) vlsi
 	cd build/vlsi/vcs-sim-gl-syn && make CONFIG=$(CONFIG)
 	cd ../../..
-	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand build/vlsi/vcs-sim-gl-syn/$(MODULE)"
+	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand \"build/vlsi/vcs-sim-gl-syn/$(MODULE) -ucli -do build/vlsi/vcs-sim-gl-syn/+run_from_prjdir.tcl\""
 
 run-vlsi-syn-vpd: $(src_files) vlsi
 	cd build/vlsi/vcs-sim-gl-syn && make CONFIG=$(CONFIG)
 	cd ../../..
-	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand build/vlsi/vcs-sim-gl-syn/$(MODULE) +vcdfile=build/vlsi/vcs-sim-gl-syn/Sha3Accel.vcd"
+	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand \"build/vlsi/vcs-sim-gl-syn/$(MODULE) -ucli -do build/vlsi/vcs-sim-gl-syn/+run_from_prjdir.tcl\" +vcdfile=build/vlsi/vcs-sim-gl-syn/Sha3Accel.vcd"
 
 run-vlsi-syn-report: $(src_files) vlsi
 	cd build/vlsi/vcs-sim-gl-syn && make CONFIG=$(CONFIG)
 	cd ../../..
-	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand build/vlsi/vcs-sim-gl-syn/$(MODULE)" > build/vlsi/vcs-syn-report
+	sbt "run-main sha3.Sha3AccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-syn --testCommand \"build/vlsi/vcs-sim-gl-syn/$(MODULE) -ucli -do build/vlsi/vcs-sim-gl-syn/+run_from_prjdir.tcl\"" > build/vlsi/vcs-syn-report
 
 
 run-vlsi: $(src_files) vlsi

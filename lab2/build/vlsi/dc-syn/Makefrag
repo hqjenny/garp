@@ -10,7 +10,7 @@ dc_vsrcs = \
 # Specify what the toplevel verilog module is
 
 dc_toplevel = $(TOP)
-dc_testharness = Sha3Accel-harness
+dc_testharness = test
 dc_toplevelinst = Sha3Accel
 
 #--------------------------------------------------------------------
