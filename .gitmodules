@@ -19,3 +19,20 @@
 [submodule "lab3/jackhammer"]
 	path = lab3/jackhammer
 	url = git@github.com:ucberkeley-cs250/jackhammer.git
+[submodule "lab4/sha3/chisel"]
+	path = lab4/sha3/chisel
+	url = git@github.com:ucberkeley-cs250/chisel.git
+[submodule "lab4/sha3/context-dependent-environments"]
+	path = lab4/sha3/context-dependent-environments
+	url = git@github.com:ucberkeley-cs250/context-dependent-environments.git
+[submodule "lab4/sha3/jackhammer"]
+	path = lab4/sha3/jackhammer
+	url = git@github.com:ucberkeley-cs250/jackhammer.git
+[submodule "lab4/riscv-isa-sim"]
+	path = lab4/riscv-isa-sim
+	url = git@github.com:ucberkeley-cs250/riscv-isa-sim.git
+	branch = sha3-riscv-isa-sim
+[submodule "lab4/rocket-chip"]
+	path = lab4/rocket-chip
+	url = git@github.com:ucberkeley-cs250/rocket-chip.git
+	branch = sha3-rocket-chip-rev3
