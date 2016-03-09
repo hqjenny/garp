@@ -1,0 +1,5 @@
+project/project/*
+project/target
+target
+build/{emulator,vlsi}/generated-src/*
+*.swp

@@ -1,0 +1,16 @@
+simv*
+csrc
+*.vpd
+*.vcd
+*.saif
+*.key
+DVE*
+.vcs*
+timestamp
+*.out
+*.h
+*.log
+*.cmd
+*.daidir
+*.a
+*.ucli

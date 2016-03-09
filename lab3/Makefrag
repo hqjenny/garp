@@ -1,0 +1,16 @@
+#SBT := java -Xmx2048M -Xss8M -XX:MaxPermSize=128M -jar ~cs250/install/sbt/sbt-launch.jar
+SBT := sbt
+
+src_path = src/main/scala
+mem_gen = build/vlsi/src/vlsi_mem_gen
+
+MODEL := Sha3AccelMain
+MODULE := Sha3Accel
+SRC := $(src_path)/*.scala
+PROJ := sha3
+
+DCONFIG := DefaultConfig
+CONFIG ?= DefaultConfig
+
+JSETTINGS = IclusterSettings
+JSETTINGS ?= DefaultSettings
