@@ -245,8 +245,10 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
   }
 
   // ShiftInvert
+  // mode[0] -> 1 shift_in 
+  // mode[0] -> 0 0 
   for (i <- 0 until 3){
-      shiftinvert(i).shift_in := io.shift_X_in(i)
+      shiftinvert(i).shift_in := Mux(mode(0).toBool, io.shift_X_in(i), Bits(0, width=1))
       shiftinvert(i).in := io.X_in(i)
       shiftinvert(i).sel := X_in_sel(i)
       shiftinvert_out(i) := shiftinvert(i).out 
@@ -276,9 +278,11 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
   }
 
   // CarryChain
+  // mode[0] -> 1 shift_in 
+  // mode[0] -> 0 0 
   carrychain.propagate := lut_out(1)
   carrychain.generate := lut_out(0)
-  carrychain.carry_in := io.carry_in
+  carrychain.carry_in := Mux(mode(0).toBool, io.carry_in, Bits(0, width=1))
   carrychain_out := carrychain.out
   io.carry_out := carrychain.carry_out
 
@@ -295,15 +299,43 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
   D_sel := mode(0)
   D_sel_out := Mux ( D_sel, Bits(2, width=2), crossbar_out(3))
   
-
   // TableSelector
   tableselector.in := lut_out
   tableselector.sel := D_sel_out
   tableselector_out := tableselector.out
 
+  // Selector
+  // mx[0] -> 0 in2 -> D in3 -> H_out_above
+  // mx[1] -> 1 in2 -> B in3 -> 0
+  selector.in(0) := shiftinvert_out(0)
+  selector.in(1) := shiftinvert_out(1)
+  selector.in(2) := Mux (mx(0).toBool, io.X_in(1), io.X_in(3))
+  selector.in(3) := Mux (mx(0).toBool, Bits(0, width=2), io.H_out_above)
+  selector.sel := shiftinvert_out(2)
+  selector_out := selector.out
+
+  // Output 
+  // mode -> 000 mx -> D' : table mode 
+  // mode -> 001 mx -> 01 : split table mode 
+  // mode -> 01k mx -> 00 : select mode 
+  // mode -> 01k mx -> 01 : partial select mode 
+  // mode -> 10k mx -> result : carry chain mode 
+  // mode -> 11k mx -> result : triple add mode
+  switch(mode(2,1)){
+    is(Bits(0, width=2)){
+     io.Z := tableselector_out 
+    }
+    is(Bits(1, width=2)){
+      io.Z := selector_out 
+    }
+    is(Bits(2, width=2)){
+      io.Z := resultfunct_out
+    }
+    is(Bits(3, width=2)){
+      io.Z := resultfunct_out 
+    }
+  }
 }
-
-
 
 class CarrySaveAdderModuleTests(c: CarrySaveAdderModule) extends Tester(c) {
       poke(c.io.shift_carry_in, 0)
