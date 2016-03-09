@@ -13,6 +13,21 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=10, val G: Int=4)
     val G_wire_above_in = Vec.fill(G){Bits(INPUT, width=W)}
     val G_wire_below_in = Vec.fill(G){Bits(INPUT, width=W)}
     val mem_bus_in = Bits(INPUT, width=W)
+
+    // Shift_A_in, Shift_B_in, Shift_C_in
+    val shift_X_in = Vec.fill(3){Bits(INPUT, width=1)}
+
+    // Hout Above
+    val H_out_above = Bits(INPUT, width=W)
+
+    val shift_carry_in = Bits(INPUT, width=1)
+    val carry_in = Bits(INPUT, width=1)
+
+    // Shift_A_out, Shift_B_out, Shift_C_out
+    val shift_X_out = Vec.fill(3){Bits(OUTPUT, width=1)}
+    val shift_carry_out = Bits(OUTPUT, width=1)
+    val carry_out = Bits(OUTPUT, width=1)
+
     // Control 
     // From control block config C' and D', whether access memory and Z or D
     val store_en = Bits(INPUT, width=1)
@@ -147,12 +162,20 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=10, val G: Int=4)
     }
   }
  
-  // Add FU here
-
+  // Functional Unit
   val FU = Module(new FunctionalUnitModule(W)).io
   FU.config := io.config
   FU.X_in := X_in
-  FU.Z := Z
+  FU.shift_X_in := io.shift_X_in
+  FU.H_out_above := io.H_out_above
+  FU.shift_carry_in := io.shift_carry_in
+  FU.carry_in := io.carry_in
+
+
+  io.shift_X_out := FU.shift_X_out
+  io.shift_carry_out := FU.shift_carry_out
+  io.carry_out := FU.carry_out
+  Z := FU.Z
 
   Z_reg_in := Mux (store_Z.toBool, io.mem_bus_in, Z)
   D_reg_in := Mux (store_D.toBool, io.mem_bus_in, X_in(3)) // X_in(3) is D
