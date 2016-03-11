@@ -3,7 +3,7 @@ package garp
 import Chisel._
 
 // W bit width, H is at most 12 
-class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=10, val G: Int=4) extends Module {
+class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4) extends Module {
 
   val io = new Bundle { 
     // 16 2-bit input

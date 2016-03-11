@@ -338,8 +338,15 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
 }
 
 class CarrySaveAdderModuleTests(c: CarrySaveAdderModule) extends Tester(c) {
-      poke(c.io.shift_carry_in, 0)
-      //poke(c.io., 0)
+      
+      for (i <- 0 until 2){
+        poke(c.io.shift_carry_in, i)
+        for (j <- 0 until 4){
+
+          state = Array.fill(5*5){BigInt(3)}
+          poke(c.io.in, 0)
+        }
+      }
       step(1)
 }
 
@@ -351,4 +358,3 @@ object CarrySaveAdderMain {
     }
   }
 }
-
