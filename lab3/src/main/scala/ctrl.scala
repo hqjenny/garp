@@ -1,7 +1,7 @@
 //see LICENSE for license
 //authors: Colin Schmidt, Adam Izraelevitz
 package sha3
-
+/*
 import Chisel._
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
@@ -622,4 +622,4 @@ class CtrlModule(val W: Int, val S: Int)(implicit p: Parameters) extends Module(
     }
   }
   }
-}
+}*/

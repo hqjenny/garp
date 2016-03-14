@@ -8,6 +8,7 @@ class CrossbarModule(val W: Int=2) extends Module {
     val sel = Bits(INPUT, width=2)
     val out = Bits(OUTPUT, width=W) 
   }
+  io.out := Bits(0)
   for(i <- 0 until 2){
     when (io.sel(i) === Bits(0, width=1)){
       io.out(i) := io.in(0)
@@ -25,6 +26,8 @@ class ShiftInvertModule(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W) 
     val shift_out = Bits(OUTPUT, width=1) 
   }
+  io.out := Bits(0)
+  io.shift_out := Bits(0)
   
   switch(io.sel){
     is(Bits(0, width=2)){
@@ -52,13 +55,18 @@ class CarrySaveAdderModule(val W: Int=2) extends Module {
   val io = new Bundle {
     val shift_carry_in = Bits(INPUT, width=1)
     val in = Vec.fill(3){Bits(INPUT, width=W)}
-    val sum = Bits(INPUT, width=W)
-    val carry = Bits(INPUT, width=W)
+    val sum = Bits(OUTPUT, width=W)
+    val carry = Bits(OUTPUT, width=W)
     val shift_carry_out = Bits(OUTPUT, width=1)
   }
 
+  io.sum := Bits(0)
+  io.carry := Bits(0)
   val carry = Bits(width=W)
+  carry := Bits(0)
+
   for(i <- 0 until 2){
+    printf("i %d: %d %d %d\n", Bits(i,2), io.in(0), io.in(1), io.in(2))
     io.sum(i):= io.in(2)(i)^io.in(1)(i)^io.in(0)(i)
     carry(i) := (io.in(2)(i)&io.in(1)(i)) | (io.in(1)(i)&io.in(0)(i)) | 
 (io.in(2)(i)&io.in(0)(i)) 
@@ -75,6 +83,7 @@ class SelectorModule(val W: Int=2) extends Module {
     val sel = Bits(INPUT, width=2)
     val out = Bits(OUTPUT, width=W)
   }
+  io.out := Bits(2)
   switch(io.sel){
     for(i <- 0 until 4){
       is(Bits(i, width=2)){
@@ -91,8 +100,10 @@ class LookUpTableModule(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
 
+  io.out := Bits(0)
   // Turn AA'BB'CC' into ABC & A'B'C'
   val in = Vec.fill(2){Bits(width=3)}
+  in := Bits(0)
   for (i <- 0 until 2){
     for(j <- 0 until 3){
       in(i)(j) := io.in(j)(i)
@@ -114,10 +125,11 @@ class CarryChainModule(val W: Int=2) extends Module {
   val io = new Bundle {
     val propagate = Bits(INPUT, width=W)
     val generate = Bits(INPUT, width=W)
-    val carry_in = Bits(OUTPUT, width=1)
+    val carry_in = Bits(INPUT, width=1)
     val out = Bits(OUTPUT, width=W)
     val carry_out = Bits(OUTPUT, width=1)
   }
+  io.out := Bits(0)
   val mux0_out = Bits(width=1)
   
   mux0_out := Mux(io.propagate(0), io.carry_in, io.generate(0)) 
@@ -137,6 +149,7 @@ class ResultFunctionModule(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
     
+  io.out := Bits(0)
   switch(io.mx){
     is(Bits(0, width=2)){
       io.out := io.V
@@ -161,6 +174,7 @@ class TableSelectorModule(val W: Int=2) extends Module {
     val sel = Bits(INPUT, width=2)
     val out = Bits(OUTPUT, width=2)
   }
+  io.out := Bits(0)
   for (i <- 0 until 2){
     // Choose from different tables
     io.out(i) := Mux(io.sel(i), io.in(1)(i), io.in(0)(i))
@@ -194,6 +208,8 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
     val carry_out = Bits(OUTPUT, width=1)
     val Z = Bits(OUTPUT, width=W)
   }
+  // Set Default Value
+  io.Z := Bits(0)
 
   // Data Signals
   val crossbar_out = Vec.fill(4){Bits(width=W)}
@@ -212,8 +228,8 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
   val X_in_sel = Vec.fill(4){Bits(width=2)}
   val mode = Bits(width=3)
   val mx = Bits(width=2)
-  val csa_or_crossbar = Bool(false) 
-  val D_sel = Bool(false) 
+  val csa_or_crossbar = Bool() 
+  val D_sel = Bool() 
 
   mode := io.config(15,13)
   X_in_sel(0) := io.config(57,56)
@@ -339,15 +355,30 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
 
 class CarrySaveAdderModuleTests(c: CarrySaveAdderModule) extends Tester(c) {
       
-      for (i <- 0 until 2){
-        poke(c.io.shift_carry_in, i)
+      // Exhausive Tests
+      /*for (i <- 0 until 2){
+        poke(c.io.fdsfsdshift_carry_in, i)
         for (j <- 0 until 4){
-
           state = Array.fill(5*5){BigInt(3)}
           poke(c.io.in, 0)
         }
-      }
+      }*/
+            
+
+      val in = Array( 
+        BigInt(1),
+        BigInt(2),
+        BigInt(3)
+      )
+      poke(c.io.shift_carry_in, 0)
+      poke(c.io.in, in)
+      /*poke(c.io.in(0), 1)
+      poke(c.io.in(1), 2)
+      poke(c.io.in(2), 3)*/
       step(1)
+      peek(c.io.sum)
+      peek(c.io.carry)
+      peek(c.io.shift_carry_out)
 }
 
 object CarrySaveAdderMain { 

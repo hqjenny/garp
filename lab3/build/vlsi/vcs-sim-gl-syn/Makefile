@@ -27,15 +27,15 @@ include $(build_dir)/Makefrag-sim
 .PHONY: run
 
 all : $(simv)
-	cp $(simv) Sha3Accel
-	-rm Sha3Accel.daidir
-	ln -s $(simv).daidir Sha3Accel.daidir
+	cp $(simv) GarpAccel
+	-rm GarpAccel.daidir
+	ln -s $(simv).daidir GarpAccel.daidir
 
 #--------------------------------------------------------------------
 # Clean up
 #--------------------------------------------------------------------
 
-junk += simv* csrc *.vpd *.key DVE* .vcs* timestamp *.out *.h *.a *.ucli Sha3*
+junk += simv* csrc *.vpd *.key DVE* .vcs* timestamp *.out *.h *.a *.ucli Garp*
 
 clean :
 	rm -rf $(junk) *~ \#* *.log *.cmd *.daidir

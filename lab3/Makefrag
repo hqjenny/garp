@@ -4,10 +4,10 @@ SBT := sbt
 src_path = src/main/scala
 mem_gen = build/vlsi/src/vlsi_mem_gen
 
-MODEL := Sha3AccelMain
-MODULE := Sha3Accel
+MODEL := GarpAccelMain
+MODULE := GarpAccel
 SRC := $(src_path)/*.scala
-PROJ := sha3
+PROJ := garp
 
 DCONFIG := DefaultConfig
 CONFIG ?= DefaultConfig

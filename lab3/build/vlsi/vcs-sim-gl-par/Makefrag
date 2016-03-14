@@ -40,7 +40,7 @@ VCS_OPTS = -notice -PP -line +lint=all,noVCDE,noTFIPC,noIWU,noOUDPE,noVNGS,noONG
   -P $(vpi_tab) \
   -debug \
   +delay_mode_zero \
-  #+neg_tchk +sdfverbose -negdelay -sdf max:Sha3Accel:$(icc_sdf) \
+  #+neg_tchk +sdfverbose -negdelay -sdf max:GarpAccel:$(icc_sdf) \
 
 #  +neg_tchk +sdfverbose -negdelay -sdf typ:SumAccel:$(icc_sdf) \
 

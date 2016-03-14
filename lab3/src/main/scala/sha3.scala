@@ -4,17 +4,17 @@ package sha3
 
 //import Chisel.Implicits._
 import Chisel._
-import Chisel.AdvTester._
+//import Chisel.AdvTester._
 
 //import rocket._
 
-import cde.{Parameters, Field, Ex, World, ViewSym, Knob, Dump, Config, ParameterDump, Collector}
-import cde.Implicits._
+//import cde.{Parameters, Field, Ex, World, ViewSym, Knob, Dump, Config, ParameterDump, Collector}
+//import cde.Implicits._
 
-case object WidthP extends Field[Int]
-case object Stages extends Field[Int]
-case object FastMem extends Field[Boolean]
-case object BufferSram extends Field[Boolean]
+//case object WidthP extends Field[Int]
+//case object Stages extends Field[Int]
+//case object FastMem extends Field[Boolean]
+//case object BufferSram extends Field[Boolean]
 
 /*
 abstract class SimpleRoCC()(implicit p: Parameters) extends RoCC()(p)
@@ -32,7 +32,7 @@ abstract class SimpleRoCC()(implicit p: Parameters) extends RoCC()(p)
   io.pptw.req.valid := Bool(false)
   io.mem.invalidate_lr := Bool(false)
 }*/
-
+/*
 abstract class SimpleRoCC()(implicit p: Parameters) extends RoCC()(p)
 {
   io.interrupt := Bool(false)
@@ -332,4 +332,4 @@ object Sha3AccelMain{
     //Set isTrace to true to enable peek/poke printing
     chiselMainTest(args.drop(3), () => Module(new Sha3Accel()(paramsFromConfig))){c => new Sha3AccelTests(c, isTrace = false)}
   }
-}
+}*/

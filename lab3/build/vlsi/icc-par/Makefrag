@@ -6,7 +6,7 @@
 
 icc_toplevel = $(TOP)
 icc_testharness = test
-icc_toplevelinst = Sha3Accel
+icc_toplevelinst = GarpAccel
 
 #--------------------------------------------------------------------
 # Build rules

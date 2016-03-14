@@ -1,6 +1,6 @@
 package sha3
 
-import scala.util.Random
+/*import scala.util.Random
 
 import Chisel.{AdvTester => _, _}
 import Chisel.AdvTester._
@@ -329,7 +329,7 @@ abstract class RoCC()(implicit p: Parameters) extends Module
   val io = new RoCCInterface
   io.mem.req.bits.phys := Bool(true) // don't perform address translation
 }
-
+*/
 
 /*
 abstract class SimpleRoCC()(implicit p: Parameters) extends RoCC()(p)
@@ -349,7 +349,7 @@ abstract class SimpleRoCC()(implicit p: Parameters) extends RoCC()(p)
 
 
 // These case classes and objects are used to provide convenient scala structures for the Chisel Bundles
-case class TestInst(funct: BigInt, rd: BigInt,  rs1: BigInt,  rs2: BigInt,
+/*case class TestInst(funct: BigInt, rd: BigInt,  rs1: BigInt,  rs2: BigInt,
                                    xd: Boolean, xs1: Boolean, xs2: Boolean,
                     opcode: BigInt=Instructions.CUSTOM0.litValue().toInt) {
   def inject(db: AdvTester[_], target: RoCCInstruction): Unit = {
@@ -411,7 +411,7 @@ class RoCCTest[+T <: Module](dut: RoCC) extends AdvTester(dut) {
   val MemResp_IHandler = new ValidSource(dut.io.mem.resp, (sckt: HellaCacheResp, in: TestMemResp) => in.inject(this, sckt))
 
   def dutBusy = peek(dut.io.busy) == 1
-
+*/
 /*
   val InterruptChecker = new AdvTester.Processable {
     def process() = { assert(ovars(dut.io.interrupt).litValue() == 0, "System Failure: Accelerator not allowed to raise interrupt.") }
@@ -429,7 +429,7 @@ class RoCCTest[+T <: Module](dut: RoCC) extends AdvTester(dut) {
   */
 
   // Setup some memory models
-  val instantMemory = new InstantMemory(64, 64*64*2, MemReq_OHandler.outputs, MemResp_IHandler.inputs)
+/*  val instantMemory = new InstantMemory(64, 64*64*2, MemReq_OHandler.outputs, MemResp_IHandler.inputs)
   val slowMemory = new SlowMemory(64, 64*64*2, MemReq_OHandler.outputs, MemResp_IHandler.inputs)
   val randomMemory = new RandomMemory(64, 64*64*2, MemReq_OHandler.outputs, MemResp_IHandler.inputs)
 }
@@ -513,4 +513,4 @@ class RandomMemory(word_width: Int, depth: Int, req_q: scala.collection.mutable.
 
     cur_time = (cur_time + 1) % max_wait
   }
-}
+}*/

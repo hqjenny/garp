@@ -1,9 +1,6 @@
-package sha3
+package garp
 
 import Chisel._
-
-import cde.{Parameters, Field}
-import cde.Implicits._
 
 class tsbufferBlackBox() extends BlackBox() {
   val io = new Bundle {

@@ -26,9 +26,9 @@ include $(build_dir)/vcs-sim-gl-par/Makefrag
 .PHONY: run
 
 all : $(vcs_sim)
-	cp $(vcs_sim) Sha3Accel
-	-rm Sha3Accel.daidir
-	ln -s $(vcs_sim).daidir Sha3Accel.daidir
+	cp $(vcs_sim) GarpAccel
+	-rm GarpAccel.daidir
+	ln -s $(vcs_sim).daidir GarpAccel.daidir
 
 #--------------------------------------------------------------------
 # Clean up

@@ -4,14 +4,21 @@
 
 # Verilog sources (do not include test harness!)
 
+#blackbox_srcs = $(wildcard $(base_dir)/rocket-chip/$(ROCKETCHIP_ADDONS)/src/main/verilog/*.v)
+#blackbox_srcs = $(wildcard $(base_dir)/rocket-chip/$(ROCKETCHIP_ADDONS)/src/main/verilog/*.v)
+#blackbox_files = $(notdir $(blackbox_srcs))
+#blackbox_verilog_src = $(addprefix src/verilog/,$(blackbox_files))
+
 dc_vsrcs = \
 	$(build_dir)/generated-src/$(TOP).$(CONFIG).v \
+	#$(blackbox_verilog_src) #for blackboxed files
+	
 
 # Specify what the toplevel verilog module is
 
 dc_toplevel = $(TOP)
 dc_testharness = test
-dc_toplevelinst = Sha3Accel
+dc_toplevelinst = GarpAccel
 
 #--------------------------------------------------------------------
 # Build rules

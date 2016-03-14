@@ -42,28 +42,28 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
     val G_wire_out = Bits(OUTPUT, width=W)
   }
   // Data Signals
-  val Z = Bits(0,W)
-  val Z_reg_in = Bits(0,W)
-  val D_reg_in = Bits(0,W)
+  val Z = Bits(width=W)
+  val Z_reg_in = Bits(width=W)
+  val D_reg_in = Bits(width=W)
   val Z_reg  = Reg(init = Bits(0,W))
   val D_reg  = Reg(init = Bits(0,W))
-  val Z_out = Bits(0,W)
-  val D_out = Bits(0,W)
+  val Z_out = Bits(width=W)
+  val D_out = Bits(width=W)
 
   // Control Signals
-  val Z_sel = Bool(false)
+  val Z_sel = Bool()
   Z_sel := io.config(12).toBool
 
-  val D_sel = Bool(false)
+  val D_sel = Bool()
   D_sel := io.config(11).toBool
 
- val H_sel = Bool(false)
+ val H_sel = Bool()
   H_sel := io.config(10).toBool
 
- val G_sel = Bool(false)
+ val G_sel = Bool()
   G_sel := io.config(9).toBool
 
- val V_sel = Bool(false)
+ val V_sel = Bool()
   V_sel := io.config(8).toBool
 
   val config_G_out = Bits(width=3)
@@ -87,10 +87,12 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   config_X_in(3) := io.config(39, 34)
 
   // A, B, C, D
-  val X_in = Vec.fill(4){Bits(INPUT, width=W)}
+  val X_in = Vec.fill(4){Bits(width=W)}
 
   // Upper Muxes
   for(i <- 0 until 4) {
+    X_in(i) := Bits(0)
+    
     // Take in 00, 10, Z_reg and D_reg
     when(config_X_in(i)(5,4) === Bits(0, width=2)) {
       switch(config_X_in(i)(1,0)){

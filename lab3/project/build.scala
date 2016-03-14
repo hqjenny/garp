@@ -17,7 +17,7 @@ object BuildSettings extends Build {
   lazy val chisel     = (project in file("chisel"))
   lazy val cde        = (project in file("context-dependent-environments"))
   lazy val jackhammer = (project in file("jackhammer"))
-  lazy val sha3       = (project in file(".")).dependsOn(chisel, cde)
+  lazy val garp       = (project in file(".")).dependsOn(chisel)
   //lazy val sha3       = (project in file(".")).dependsOn(chisel)
   //lazy val sha3       = (project in file(".")).dependsOn(chisel, cde, jackhammer)
 }
