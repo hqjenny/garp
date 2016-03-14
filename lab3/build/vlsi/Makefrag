@@ -11,7 +11,7 @@
 #  should have defined base_dir, build_dir
 #  should have included $(base_dir)/Makefrag
 
-TOP = Sha3Accel
+TOP = GarpAccel
 
 CONFIG ?= DefaultConfig
 
