@@ -9,7 +9,7 @@ class TileBlock extends Module {
         val config = Bits(INPUT, width = 5)
         val config_en = Bool(INPUT)
 
-        // Block I/O signals
+        // Interconnect signals
         val hwire_read = Bool(INPUT)
         val hwire_write = Bool(OUTPUT)
         val vwire_read = Bool(INPUT)
@@ -52,4 +52,65 @@ class TileBlock extends Module {
     when (config_encoding(1) === Bits(1, width = 1)) {
         io.hwire_write := f
     }
+}
+
+// Sample array to connect and configure four blocks
+class SampleArray extends Module {
+    val io = new Bundle {
+        // Configuration encoding signals
+        val config = Bits(INPUT, width = 5)
+        val config_index = Bits(INPUT, width = 2)
+        val config_en = Bool(INPUT)
+
+        // Interconnect signals
+        val hwire_read = Bool(OUTPUT)
+        val vwire_read = Bool(OUTPUT)
+    }
+
+    // Initialize interconnects
+    val hwire = Bool(false)
+    val vwire = Bool(false)
+    io.hwire_read := hwire
+    io.vwire_read := vwire
+
+    // Instantiate blocks
+    val block_0_0 = Module(new TileBlock()).io
+    val block_0_1 = Module(new TileBlock()).io
+    val block_1_0 = Module(new TileBlock()).io
+    val block_1_1 = Module(new TileBlock()).io
+
+    // Set up configuration network
+    block_0_0.config := io.config
+    block_0_1.config := io.config
+    block_1_0.config := io.config
+    block_1_1.config := io.config
+    when (io.config_en) {
+        switch (io.config_index) {
+            is (Bits(0, width = 2)) {
+                block_0_0.config_en := Bool(true)
+            }
+            is (Bits(1, width = 2)) {
+                block_0_1.config_en := Bool(true)
+            }
+            is (Bits(2, width = 2)) {
+                block_1_0.config_en := Bool(true)
+            }
+            is (Bits(3, width = 2)) {
+                block_1_1.config_en := Bool(true)
+            }
+        }
+    }
+
+    // Connect blocks to buses
+    // TODO: Drive buses from more than one block with tri-states
+    hwire := block_0_0.hwire_write
+    vwire := block_0_0.vwire_write
+    block_0_0.hwire_read := hwire
+    block_0_1.hwire_read := hwire
+    block_1_0.hwire_read := hwire
+    block_1_1.hwire_read := hwire
+    block_0_0.vwire_read := vwire
+    block_0_1.vwire_read := vwire
+    block_1_0.vwire_read := vwire
+    block_1_1.vwire_read := vwire
 }
