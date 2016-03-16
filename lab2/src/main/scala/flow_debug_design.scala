@@ -12,8 +12,10 @@ class TileBlock extends Module {
         // Interconnect signals
         val hwire_read = Bool(INPUT)
         val hwire_write = Bool(OUTPUT)
+        val hwire_write_en = Bool(OUTPUT)
         val vwire_read = Bool(INPUT)
         val vwire_write = Bool(OUTPUT)
+        val vwire_write_en = Bool(OUTPUT)
     }
     // Keep track of configuration encoding
     val config_encoding = Reg(init = Bits(0, width = 5))
@@ -44,14 +46,20 @@ class TileBlock extends Module {
         f := selected
     }
 
-    // Drive buses with tri-states
-    // TODO: Use blackboxed tri-states instead of logic gates
-    when (config_encoding(0) === Bits(1, width = 1)) {
-        io.vwire_write := f
+    // Drive interconnects with output of flipflop
+    io.hwire_write := f
+    io.hwire_write_en := config_encoding(1)
+    io.vwire_write := f
+    io.vwire_write_en := config_encoding(0)
+}
+
+class Interconnect extends Module {
+    val io = new Bundle {
+        val write = Vec.fill(4){Bool(INPUT)}
+        val write_en = Vec.fill(4){Bool(INPUT)}
+        val read = Vec.fill(4){Bool(OUTPUT)}
     }
-    when (config_encoding(1) === Bits(1, width = 1)) {
-        io.hwire_write := f
-    }
+    // TODO: Actually make interconnect with tri-states
 }
 
 // Sample array to connect and configure four blocks
@@ -67,50 +75,44 @@ class SampleArray extends Module {
         val vwire_read = Bool(OUTPUT)
     }
 
-    // Initialize interconnects
-    val hwire = Bool(false)
-    val vwire = Bool(false)
-    io.hwire_read := hwire
-    io.vwire_read := vwire
-
     // Instantiate blocks
-    val block_0_0 = Module(new TileBlock()).io
-    val block_0_1 = Module(new TileBlock()).io
-    val block_1_0 = Module(new TileBlock()).io
-    val block_1_1 = Module(new TileBlock()).io
+    val blocks = Vec.fill(4){Module(new TileBlock()).io}
 
     // Set up configuration network
-    block_0_0.config := io.config
-    block_0_1.config := io.config
-    block_1_0.config := io.config
-    block_1_1.config := io.config
+    for (i <- 0 until 4) {
+        blocks(i).config := io.config
+        blocks(i).config_en := Bool(false)
+    }
     when (io.config_en) {
         switch (io.config_index) {
             is (Bits(0, width = 2)) {
-                block_0_0.config_en := Bool(true)
+                blocks(0).config_en := Bool(true)
             }
             is (Bits(1, width = 2)) {
-                block_0_1.config_en := Bool(true)
+                blocks(1).config_en := Bool(true)
             }
             is (Bits(2, width = 2)) {
-                block_1_0.config_en := Bool(true)
+                blocks(2).config_en := Bool(true)
             }
             is (Bits(3, width = 2)) {
-                block_1_1.config_en := Bool(true)
+                blocks(3).config_en := Bool(true)
             }
         }
     }
 
-    // Connect blocks to buses
-    // TODO: Drive buses from more than one block with tri-states
-    hwire := block_0_0.hwire_write
-    vwire := block_0_0.vwire_write
-    block_0_0.hwire_read := hwire
-    block_0_1.hwire_read := hwire
-    block_1_0.hwire_read := hwire
-    block_1_1.hwire_read := hwire
-    block_0_0.vwire_read := vwire
-    block_0_1.vwire_read := vwire
-    block_1_0.vwire_read := vwire
-    block_1_1.vwire_read := vwire
+    // Initialize interconnects
+    val hwire = Module(new Interconnect()).io
+    val vwire = Module(new Interconnect()).io
+    io.hwire_read := hwire.read
+    io.vwire_read := vwire.read
+
+    // Connect blocks to interconnects
+    for (i <- 0 until 4) {
+        blocks(i).hwire_read := hwire.read
+        blocks(i).hwire_write := hwire.write
+        blocks(i).hwire_write_en := hwire.write_en
+        blocks(i).vwire_read := vwire.read
+        blocks(i).vwire_write := vwire.write
+        blocks(i).vwire_write_en := vwire.write_en
+    }
 }
