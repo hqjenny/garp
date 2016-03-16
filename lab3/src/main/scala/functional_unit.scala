@@ -356,29 +356,54 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
 class CarrySaveAdderModuleTests(c: CarrySaveAdderModule) extends Tester(c) {
       
       // Exhausive Tests
-      /*for (i <- 0 until 2){
-        poke(c.io.fdsfsdshift_carry_in, i)
-        for (j <- 0 until 4){
-          state = Array.fill(5*5){BigInt(3)}
-          poke(c.io.in, 0)
-        }
-      }*/
-            
+      for (i <- 0 until 2){
 
+        poke(c.io.shift_carry_in, i)
+        for (j <- 0 until 4){
+
+          poke(c.io.in(0), j)
+          for (k <- 0 until 4){
+
+            poke(c.io.in(1), k)
+            for (l <- 0 until 4){
+
+                poke(c.io.in(2), l)
+                val sum0 = (j & 0x1) ^ (k & 0x1) ^ (l & 0x1) 
+                val sum1 = (j & 0x2) ^ (k & 0x2) ^ (l & 0x2) 
+
+                val carry1 = ((j & 0x1) + (k & 0x1) + (l & 0x1)) >> 1 
+                val carry2 = ((j & 0x2) + (k & 0x2) + (l & 0x2)) >> 2 
+
+                step(1)
+                expect(c.io.sum(0), sum0)
+                expect(c.io.sum(1), sum1)
+                expect(c.io.carry(0), i)
+                expect(c.io.carry(1), carry1)
+                expect(c.io.carry(2), carry2)
+
+            }
+          }
+        }
+      }
+      /*
       val in = Array( 
         BigInt(1),
         BigInt(2),
         BigInt(3)
       )
       poke(c.io.shift_carry_in, 0)
-      poke(c.io.in, in)
-      /*poke(c.io.in(0), 1)
+      //poke(c.io.in, in)
+
+      peek(c.io.in(0))
+      peek(c.io.in(1))
+      peek(c.io.in(2))
+      poke(c.io.in(0), 1)
       poke(c.io.in(1), 2)
-      poke(c.io.in(2), 3)*/
+      poke(c.io.in(2), 3)
       step(1)
       peek(c.io.sum)
       peek(c.io.carry)
-      peek(c.io.shift_carry_out)
+      peek(c.io.shift_carry_out)*/
 }
 
 object CarrySaveAdderMain { 

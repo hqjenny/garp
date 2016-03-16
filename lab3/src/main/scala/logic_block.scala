@@ -89,8 +89,21 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   // A, B, C, D
   val X_in = Vec.fill(4){Bits(width=W)}
 
+  val IN_MUX = Module(new LogicBlockInModule(W, V, H, G)).io
+  IN_MUX.V_wire_in := io.V_wire_in
+  IN_MUX.H_wire_above_in := io.H_wire_above_in
+  IN_MUX.H_wire_below_in := io.H_wire_below_in
+  IN_MUX.G_wire_above_in := io.G_wire_above_in
+  IN_MUX.G_wire_below_in := io.G_wire_below_in
+  IN_MUX.Z_reg := Z_reg
+  IN_MUX.D_reg := D_reg
+
+  IN_MUX.config_X_in := config_X_in
+
+  X_in := IN_MUX.X_in
+
   // Upper Muxes
-  for(i <- 0 until 4) {
+  /*for(i <- 0 until 4) {
     X_in(i) := Bits(0)
     
     // Take in 00, 10, Z_reg and D_reg
@@ -162,7 +175,7 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
         }
       }
     }
-  }
+  }*/
  
   // Functional Unit
   val FU = Module(new FunctionalUnitModule(W)).io
