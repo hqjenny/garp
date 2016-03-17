@@ -66,7 +66,7 @@ class CarrySaveAdderModule(val W: Int=2) extends Module {
   carry := Bits(0)
 
   for(i <- 0 until 2){
-    printf("i %d: %d %d %d\n", Bits(i,2), io.in(0), io.in(1), io.in(2))
+    //printf("i %d: %d %d %d\n", Bits(i,2), io.in(0)(i), io.in(1)(i), io.in(2)(i))
     io.sum(i):= io.in(2)(i)^io.in(1)(i)^io.in(0)(i)
     carry(i) := (io.in(2)(i)&io.in(1)(i)) | (io.in(1)(i)&io.in(0)(i)) | 
 (io.in(2)(i)&io.in(0)(i)) 
@@ -353,6 +353,7 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
   }
 }
 
+//
 class CarrySaveAdderModuleTests(c: CarrySaveAdderModule) extends Tester(c) {
       
       // Exhausive Tests
@@ -374,12 +375,20 @@ class CarrySaveAdderModuleTests(c: CarrySaveAdderModule) extends Tester(c) {
                 val carry1 = ((j & 0x1) + (k & 0x1) + (l & 0x1)) >> 1 
                 val carry2 = ((j & 0x2) + (k & 0x2) + (l & 0x2)) >> 2 
 
+                printf("test in 0:  %d %d %d\n", j&0x1, k&0x1, l&0x1)
+                printf("test in 1:  %d %d %d\n", (j&0x2)>>1, (k&0x2)>>1, (l&0x2)>>1)
                 step(1)
-                expect(c.io.sum(0), sum0)
-                expect(c.io.sum(1), sum1)
-                expect(c.io.carry(0), i)
-                expect(c.io.carry(1), carry1)
-                expect(c.io.carry(2), carry2)
+                //expect(c.io.sum(0), sum0)
+                //expect(c.io.sum(1), sum1)
+                expect(c.io.sum, sum1+ sum0)
+
+                //expect(c.io.carry(0), i)
+                //expect(c.io.carry(1), carry1)
+                //expect(c.io.carry(2), carry2)
+                expect(c.io.carry, (carry1 << 1) + i)
+
+                expect(c.io.shift_carry_out, carry2)
+                //printf("test vector %d %d %d\n", carry2, carry1, i)
 
             }
           }
