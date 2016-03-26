@@ -14,7 +14,7 @@ class ControlReducer extends Module {
   when (io.select === Bits(0, width=2)) {
     // When select is 00, A' = A0
     io.a_prime := a0
-  } .elsewhen (io.select === Bits(4, width=2)) {
+  } .elsewhen (io.select === Bits(3, width=2)) {
     // When select is 11, A' = A1
     io.a_prime := a1
   } .otherwise {
@@ -39,9 +39,14 @@ class ControlMux extends Module {
     io.a := Cat(io.select(0), Bits(0, width=1))
   } .otherwise {
     // Output an H wire
-    switch (io.select(3,1)) {
+    //switch (io.select(3,1)) {
+
+    // JENNY
+    switch (io.select(3,0)) {
+      // select from 2 to 10 until 11 
       for (i <- 0 until 9) {
-        is (Bits(i + 2, width=3)) {
+        is (Bits(i + 2, width=4)) {
+        //is (Bits(i + 2, width=3)) {
           io.a := h_wires(i)
         }
       }
@@ -95,9 +100,39 @@ class ControlBlock extends Module {
     reducers(i).a := muxes(i).a
     reducers(i).select := primes(i)
   }
-
+  // prime 0-3 A-D
   io.B_prime := reducers(0).a_prime & reducers(1).a_prime
   io.C_prime := reducers(0).a_prime & reducers(2).a_prime
   io.D_prime := reducers(0).a_prime & reducers(3).a_prime
+  
+  // Processor Mode 010
+  val proc_mode = Bool(false) 
+  proc_mode := (mode === Bits(2,width=3))
+
+  // If the A' and C' inputs are both 1, the array clock counter is zeroed at the end of the current array clock cycle, thus halting array execution.
+  val zero_counter = Bool(false)
+  zero_counter := proc_mode && (primes(0)(0)).toBool && (primes(2)(0)).toBool 
+
+  // If A' and D' are both 1, the main processor is forced to take an interrupt.
+  val en_interrupt = Bool(false)
+  en_interrupt := proc_mode && (primes(0)(0)).toBool && (primes(3)(0)).toBool 
+
+  // Memory Mode 110 
+  val mem_mode = Bool(false) 
+  mem_mode := (mode === Bits(6,width=3))
+
+  // Initial Step
+  // A demand access to memory is initiated whenever A' and B ' are both 1.
+  val demand_access = Bool(false)
+  demand_access := mem_mode && (primes(0)(0)).toBool && (primes(1)(0)).toBool 
+
+  // If D' is 0 at that time, the access will be a read; otherwise it will be either a write or a prefetch, depending on the configuration.
+  //If an access is not a read (that is, if D' = 1), it is either a write or a prefetch. The type field of the configuration (Figure A.42) determines whether a non-read memory access is a write or a prefetch, and also whether a cache miss should cause data to be brought into the cache
+
+  // Transfer Step
+
+
+
+
 }
 

@@ -378,41 +378,14 @@ class CarrySaveAdderModuleTests(c: CarrySaveAdderModule) extends Tester(c) {
                 printf("test in 0:  %d %d %d\n", j&0x1, k&0x1, l&0x1)
                 printf("test in 1:  %d %d %d\n", (j&0x2)>>1, (k&0x2)>>1, (l&0x2)>>1)
                 step(1)
-                //expect(c.io.sum(0), sum0)
-                //expect(c.io.sum(1), sum1)
                 expect(c.io.sum, sum1+ sum0)
-
-                //expect(c.io.carry(0), i)
-                //expect(c.io.carry(1), carry1)
-                //expect(c.io.carry(2), carry2)
                 expect(c.io.carry, (carry1 << 1) + i)
-
                 expect(c.io.shift_carry_out, carry2)
-                //printf("test vector %d %d %d\n", carry2, carry1, i)
 
             }
           }
         }
       }
-      /*
-      val in = Array( 
-        BigInt(1),
-        BigInt(2),
-        BigInt(3)
-      )
-      poke(c.io.shift_carry_in, 0)
-      //poke(c.io.in, in)
-
-      peek(c.io.in(0))
-      peek(c.io.in(1))
-      peek(c.io.in(2))
-      poke(c.io.in(0), 1)
-      poke(c.io.in(1), 2)
-      poke(c.io.in(2), 3)
-      step(1)
-      peek(c.io.sum)
-      peek(c.io.carry)
-      peek(c.io.shift_carry_out)*/
 }
 
 object CarrySaveAdderMain { 
