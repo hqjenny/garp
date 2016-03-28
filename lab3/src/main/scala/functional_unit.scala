@@ -174,7 +174,7 @@ class TableSelectorModule(val W: Int=2) extends Module {
     val sel = Bits(INPUT, width=2)
     val out = Bits(OUTPUT, width=2)
   }
-  io.out := Bits(0)
+  io.out := Bits(0, width=2)
   for (i <- 0 until 2){
     // Choose from different tables
     io.out(i) := Mux(io.sel(i), io.in(1)(i), io.in(0)(i))
