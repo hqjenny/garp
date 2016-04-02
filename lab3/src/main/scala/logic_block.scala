@@ -40,6 +40,10 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
     val V_wire_out = Bits(OUTPUT, width=W)
     val H_wire_out = Bits(OUTPUT, width=W)
     val G_wire_out = Bits(OUTPUT, width=W)
+
+
+    val config_G_out = Bits(OUTPUT, width=3)
+    val config_V_out = Bits(OUTPUT, width=5)
   }
   // Data Signals
   val Z = Bits(width=W)
@@ -66,11 +70,9 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
  val V_sel = Bool()
   V_sel := io.config(8).toBool
 
-  val config_G_out = Bits(width=3)
-  config_G_out := io.config(7,5)
+  io.config_G_out := io.config(7,5)
 
-  val config_V_out = Bits(width=5)
-  config_V_out := io.config(4,0)
+  io.config_V_out := io.config(4,0)
 
   val store_Z = Bits(width=1)
   val store_D = Bits(width=1)
