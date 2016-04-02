@@ -41,7 +41,6 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
     val H_wire_out = Bits(OUTPUT, width=W)
     val G_wire_out = Bits(OUTPUT, width=W)
 
-
     val config_G_out = Bits(OUTPUT, width=3)
     val config_V_out = Bits(OUTPUT, width=5)
   }
@@ -197,6 +196,8 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   Z_reg_in := Mux (store_Z.toBool, io.mem_bus_in, Z)
   D_reg_in := Mux (store_D.toBool, io.mem_bus_in, X_in(3)) // X_in(3) is D
 
+    // Z_sel might not be the best indicator 
+    // Alternatively, a register can be bypassed on output, in which case it never latches except when it is written to via a memory bus.
   when(Z_sel){
     Z_reg := Z_reg_in
   }

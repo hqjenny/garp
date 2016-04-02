@@ -11,7 +11,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   // 1 Control Blocks per row
   val CB = Module(new ControlBlockModule()).io
   // 23 Logic Blocks per row
-  val LB = Vec.fill(23){Module(new ControlReducerModule()).io}
+  val LB = Vec.fill(23){Module(new LogicBlockModule()).io}
   // 4 G Wires per row
   val G_wire_below =  Vec.fill(4){Bits(width=W)}
   // 31 H Wires per row, 11 rows  
