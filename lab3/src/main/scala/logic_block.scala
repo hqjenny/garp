@@ -212,3 +212,28 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   io.G_wire_out := Mux(G_sel, D_out, Z_out)
   io.V_wire_out := Mux(V_sel, D_out, Z_out)
 }
+
+object replace_range {
+  def apply(field:BigInt, bits:Int, size:Int, pos:Int) : BigInt = {
+    val clear = BigInt(((1 << size) - 1) << (pos))
+    val mask = BigInt((bits & ((1 << size) - 1)) << (pos))
+    return (field &~ clear) | mask
+  }
+}
+
+class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
+  // Basic tester functionality test
+  // Pass an incoming signal from D to a V wire
+  var encoding = BigInt(0x0000000000000000)
+  // Set D to be V wire pair 0
+  encoding = replace_range(encoding, 0x1F, 6, 34)
+}
+
+object LogicBlockModuleMain {
+  def main(args: Array[String]): Unit = {
+    // Default values
+    chiselMainTest(args, () => Module(new LogicBlockModule())){
+      c => new LogicBlockModuleTests(c)
+    }
+  }
+}
