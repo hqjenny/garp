@@ -229,6 +229,9 @@ class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
   var encoding = BigInt(0x0000000000000000)
   // Set D to be V wire pair 0
   encoding = replace_range(encoding, 0x1F, 6, 34)
+  // Set Hout to D
+  encoding = replace_range(encoding, 0x1, 1, 10)
+  println(encoding.toString(2))
 }
 
 object LogicBlockModuleMain {
