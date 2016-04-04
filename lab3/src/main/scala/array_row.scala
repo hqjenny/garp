@@ -22,11 +22,11 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     // 23 x V wires
     val V_wire_in = Vec.fill(23*V){Bits(INPUT, width=W)}
 
-    // Assume 1 mem bus is allowed
-    val mem_bus_in = Vec.fill(23){Bits(INPUT, width=W)}
-
     val G_wire_above =  Vec.fill(G){Bits(INPUT, width=W)}
     val H_wire_above =  Vec.fill(33){Bits(INPUT, width=W)}
+
+    // Assume 1 mem bus is allowed
+    val mem_bus_in = Vec.fill(23){Bits(INPUT, width=W)}
 
     // H output of the block immediately above 
     val H_out_above =  Vec.fill(23){Bits(INPUT, width=W)}
@@ -39,6 +39,11 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
 
     // Port for testing 
     val config = Vec.fill(24){Bits(INPUT, width=64)}
+
+    // Assume 1 mem bus is allowed
+    val mem_bus_out = Vec.fill(23){Bits(OUTPUT, width=W)}
+
+
   }
   // 1 Control Blocks per row
   val CB = Module(new ControlBlockModule()).io
@@ -77,10 +82,29 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     }
   }
 
+  // mem_bus_in
   for (i <- 0 until 23) {
-    LB(i).mem_bus_in := mem_bus_in(i)
+    LB(i).mem_bus_in := io.mem_bus_in(i)
+    io.mem_bus_out(i) := LB(i).mem_bus_out
   }
 
+  // shift_X, shift_carry, carry
+  for (i <- 1 until 23) {
+    LB(i).shift_X_in := LB(i-1).shift_X_out
+    LB(i).shift_carry_in := LB(i-1).shift_carry_out
+    LB(i).carry_in := LB(i-1).carry_out
+  }
+
+  // config just for testing
+  for (i <- 1 until 23) {
+    LB(i).config := io.config(i)
+  }
+
+
+  for (i <- 1 until 23) {
+    LB(i).mem_D_or_Z := CB.mem_D_or_Z
+    LB(i).store_en := CB.store_transfer_access
+  }
   // Like the G wires, each H wire can be driven by a logic block from above the wire and can be read by any block above or below the wire.
   // JENNY not sure why the index is reversed
   // G wires
