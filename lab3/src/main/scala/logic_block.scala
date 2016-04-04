@@ -215,3 +215,75 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   io.G_wire_out := Mux(G_sel, D_out, Z_out)
   io.V_wire_out := Mux(V_sel, D_out, Z_out)
 }
+
+object replace_range {
+  def apply(field:BigInt, bits:Int, size:Int, pos:Int) : BigInt = {
+    val clear = BigInt(((1 << size) - 1)) << pos
+    val mask = BigInt((bits & ((1 << size) - 1))) << pos
+    return (field &~ clear) | mask
+  }
+}
+
+class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
+  println("Basic test to pass signal from input wire to output wire")
+  // Pass an incoming V wire signal from D to an H wire
+  var encoding = BigInt(0x0000000000000000L)
+  // Set D to be V wire pair 0
+  encoding = replace_range(encoding, 0x1F, 6, 34)
+  // Set Hout to D
+  encoding = replace_range(encoding, 0x1, 1, 10)
+  println("Encoding: 0x" + encoding.toString(16))
+  peek(c.io.H_wire_out)
+  poke(c.io.config, encoding)
+  poke(c.io.V_wire_in(0), 2)
+  peek(c.io.H_wire_out)
+
+  println("Table Mode Tests")
+  encoding = BigInt(0x0000000000000000L)
+  poke(c.io.config, encoding)
+  // Stet to table mode
+  replace_range(encoding, 0x0, 3, 13)
+  // Set table to a 4 way XOR
+  replace_range(encoding, 0x6996, 16, 16)
+  // Set A to be H wire pair 1 above and set A'
+  encoding = replace_range(encoding, 0xA6, 8, 56)
+  // Set B to be H wire pair 2 below and set B'
+  encoding = replace_range(encoding, 0xE2, 8, 48)
+  // Set C to be G wire pair 3 above and set C'
+  encoding = replace_range(encoding, 0xB2, 8, 40)
+  // Set D to be V wire pair 0 and set D'
+  encoding = replace_range(encoding, 0x7E, 8, 32)
+  peek(c.io.H_wire_out)
+  poke(c.io.config, encoding)
+  poke(c.io.H_wire_above_in(1), 3)
+  poke(c.io.H_wire_below_in(2), 2)
+  poke(c.io.G_wire_above_in(3), 3)
+  poke(c.io.V_wire_in(0), 3)
+  peek(c.IN_MUX.X_in(0))
+  peek(c.io.H_wire_out)
+  poke(c.io.H_wire_above_in(1), 2)
+  poke(c.io.H_wire_below_in(2), 2)
+  poke(c.io.G_wire_above_in(3), 2)
+  poke(c.io.V_wire_in(0), 1)
+  peek(c.io.H_wire_out)
+
+
+  println("Split Table Mode Tests")
+
+  println("Select Mode Tests")
+
+  println("Partial Select Mode Tests")
+
+  println("Carry Chain Mode Tests")
+
+  println("Triple Add Mode Tests")
+}
+
+object LogicBlockModuleMain {
+  def main(args: Array[String]): Unit = {
+    // Default values
+    chiselMainTest(args, () => Module(new LogicBlockModule())){
+      c => new LogicBlockModuleTests(c)
+    }
+  }
+}
