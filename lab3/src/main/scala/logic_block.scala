@@ -225,6 +225,9 @@ object replace_range {
 }
 
 class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
+  val rand = scala.util.Random
+  val TRIALS = 10
+
   println("\n=====Basic Propagation Test=====")
   // Pass an incoming V wire signal from D to an H wire
   var encoding = BigInt(0x0000000000000000L)
@@ -244,8 +247,6 @@ class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
   poke(c.io.config, encoding)
   // Stet to table mode
   encoding = replace_range(encoding, 0x0, 3, 13)
-  // Set table to a 4 way XOR
-  encoding = replace_range(encoding, 0x6996, 16, 16)
   // Set A to be H wire pair 1 above and set A'
   encoding = replace_range(encoding, 0xA6, 8, 56)
   // Set B to be H wire pair 2 below and set B'
@@ -254,26 +255,31 @@ class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
   encoding = replace_range(encoding, 0xB2, 8, 40)
   // Set D to be V wire pair 0 and set D'
   encoding = replace_range(encoding, 0x7E, 8, 32)
-  peek(c.io.H_wire_out)
-  println("Encoding: 0x" + encoding.toString(16))
-  poke(c.io.config, encoding)
-  poke(c.io.H_wire_above_in(1), 3)
-  poke(c.io.H_wire_below_in(2), 2)
-  poke(c.io.G_wire_above_in(3), 3)
-  poke(c.io.V_wire_in(0), 3)
-  peek(c.io.H_wire_out)
-  expect(c.io.H_wire_out, 3^2^3^3)
-  poke(c.io.H_wire_above_in(1), 2)
-  poke(c.io.H_wire_below_in(2), 2)
-  poke(c.io.G_wire_above_in(3), 3)
-  poke(c.io.V_wire_in(0), 1)
-  expect(c.io.H_wire_out, 2^2^3^1)
-  // Set table to a 2 way AND between C and D to break symmetry
-  encoding = replace_range(encoding, 0xF000, 16, 16)
-  println("Encoding: 0x" + encoding.toString(16))
-  poke(c.io.config, encoding)
-  expect(c.io.H_wire_out, 3&1)
 
+  for (trial <- 1 to TRIALS) {
+    println("--Trial " + trial.toString + "--")
+    var inputs = new Array[Int](4)
+    for (i <- 0 until 4) {
+      inputs(i) = rand.nextInt(4)
+    }
+    println("Random Inputs: " + inputs.mkString(", "))
+    var table = rand.nextInt(0x10000)
+    var big_table = BigInt(table)
+    println("Random Table: 0x" + big_table.toString(16))
+    encoding = replace_range(encoding, table, 16, 16)
+    println("Encoding: 0x" + encoding.toString(16))
+    poke(c.io.config, encoding)
+    poke(c.io.H_wire_above_in(1), inputs(0))
+    poke(c.io.H_wire_below_in(2), inputs(1))
+    poke(c.io.G_wire_above_in(3), inputs(2))
+    poke(c.io.V_wire_in(0), inputs(3))
+    var upper_addr = 1 * (inputs(0) >> 1) + 2 * (inputs(1) >> 1) + 4 * (inputs(2) >> 1) + 8 * (inputs(3) >> 1)
+    var lower_addr = 1 * (inputs(0) & 1) + 2 * (inputs(1) & 1) + 4 * (inputs(2) & 1) + 8 * (inputs(3) & 1)
+    var upper_result = if(big_table.testBit(upper_addr)) 1 else 0
+    var lower_result = if(big_table.testBit(lower_addr)) 1 else 0
+    expect(c.io.H_wire_out, (upper_result << 1) | lower_result)
+    println("")
+  }
 
 
   println("\n=====Split Table Mode Tests=====")
