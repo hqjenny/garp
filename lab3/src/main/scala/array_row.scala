@@ -2,47 +2,121 @@ package garp
 
 import Chisel._
 
+class GWireModule(val W: Int=2) extends Module {
+  val io = new Bundle {
+    val G_in = Vec.fill(23){Bits(INPUT, width=W)}
+    val en = Bits(INPUT, width=23)
+    val G_out = Bits(OUTPUT, width=W)
+  }
+
+  for(i <- 0 until 23) {
+    when(io.en(i).toBool){
+      io.G_out := io.G_in(i) 
+    }
+  }
+}
+
 // I is the index of the row
 class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val I: Int) extends Module {
   val io = new Bundle {
+    // 23 x V wires
+    val V_wire_in = Vec.fill(23*V){Bits(INPUT, width=W)}
 
+    // Assume 1 mem bus is allowed
+    val mem_bus_in = Vec.fill(23){Bits(INPUT, width=W)}
 
+    val G_wire_above =  Vec.fill(G){Bits(INPUT, width=W)}
+    val H_wire_above =  Vec.fill(33){Bits(INPUT, width=W)}
+
+    // H output of the block immediately above 
+    val H_out_above =  Vec.fill(23){Bits(INPUT, width=W)}
+    val H_out =  Vec.fill(23){Bits(OUTPUT, width=W)}    
+
+    // 4 G Wires per row
+    val G_wire_below =  Vec.fill(G){Bits(OUTPUT, width=W)}
+    // 33 H Wires per row, 11 rows, 2 is not driven by anything  
+    val H_wire_below =  Vec.fill(33){Bits(OUTPUT, width=W)}
+
+    // Port for testing 
+    val config = Vec.fill(24){Bits(INPUT, width=64)}
   }
   // 1 Control Blocks per row
   val CB = Module(new ControlBlockModule()).io
   // 23 Logic Blocks per row
   val LB = Vec.fill(23){Module(new LogicBlockModule()).io}
-  // 4 G Wires per row
-  val G_wire_below =  Vec.fill(4){Bits(width=W)}
-  // 31 H Wires per row, 11 rows  
-  val H_wire_below =  Vec.fill(31){Bits(width=W)}
-
   // Enable driver to a specific V wire, each block has 16 wires 
-  val V_wire_en = Vec.fill(23){Bits(width=V)}
-  val G_wire_below_en = Vec.fill(23){Bits(width=G)}
+  val V_wire_en = Vec.fill(V){Bits(width=23)}
+  val G_wire_below_en = Vec.fill(G){Bits(width=23)}
+
+  // 4 G Wires per row
+  val G_wire_below =  Vec.fill(G){Bits(width=W)}
+  // 33 H Wires per row, 11 rows, 2 is not driven by anything  
+  val H_wire_below =  Vec.fill(33){Bits(width=W)}
+
+  // V Wires
+  for (i <- 0 until 23) {
+    for (j <- 0 until V) {
+      LB(i).V_wire_in(j) := io.V_wire_in(i * V + j)
+    }
+  }
+
+  // Making the assumption for now as only H9-1 have driver
+  for (i <- 0 until 9) {
+    //CB.H_wire_above_in(i) := io.H_wire_above(9,1) 
+    CB.H_wire_above_in(i) := io.H_wire_above(i+1) 
+    CB.H_wire_below_in(i) := H_wire_below(i+1) 
+  } 
+  
+  for (i <- 0 until 23) {
+    LB(i).G_wire_above_in := io.G_wire_above
+    LB(i).G_wire_below_in := G_wire_below
+    for(j <- 0 until 11) {
+      //LB(i).H_wire_above_in := io.H_wire_above(32-i,22-i)    
+      LB(i).H_wire_above_in(j) := io.H_wire_above(22-i+j)    
+      LB(i).H_wire_below_in(j) := H_wire_below(22-i+j)
+    }
+  }
+
+  for (i <- 0 until 23) {
+    LB(i).mem_bus_in := mem_bus_in(i)
+  }
 
   // Like the G wires, each H wire can be driven by a logic block from above the wire and can be read by any block above or below the wire.
-  val H_wire_below_en = Vec.fill(23){Bits(width=H)}
-
   // JENNY not sure why the index is reversed
+  // G wires
+  val G_wire_outs = Vec.fill(23){Bits(INPUT, width=W)}
+  for (i <- 0 until 23) {
+    G_wire_outs(i) := LB(i).G_wire_out
+  }
+
   for (i <- 0 until 23) {
     when (LB(i).config_G_out(2).toBool) {
       switch(LB(i).config_G_out(1,0)) {
         for(j <- 0 until 4) {
           is(Bits(j, width=2)) {
             // j: 0 -> 3 en: 3 -> 0
-            G_wire_below_en(i)(3-j)
+            G_wire_below_en(3-j)(i)
           }
         }
       }
     }
+  }
 
+  val GWireBulk = Vec.fill(G){Module(new GWireModule()).io}
+  for (i <- 0 until 4) {
+    GWireBulk(i).G_in := G_wire_outs
+    GWireBulk(i).en := G_wire_below_en(i)
+    G_wire_below(i) := GWireBulk(i).G_out
+  }
+
+  // V wires
+  for (i <- 0 until 23) {
     when (LB(i).config_V_out(4).toBool) {
       switch(LB(i).config_V_out(3,0)) {
         for(j <- 0 until 16) {
           is(Bits(j, width=2)) {
             // j: 0 -> 3 en: 3 -> 0
-            V_wire_en(i)(15-j)
+            V_wire_en(15-j)(i)
           }
         }
       }
@@ -53,15 +127,29 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   switch(CB.Hdir){
     // Driven from right end (shift left)
     is(Bits(0, width=2)){
-
+      for (i <- 0 until 23) {
+        H_wire_below(i + 1) := LB(i).H_wire_out 
+      }
     }
     // Driven from center
     is(Bits(1, width=2)){
-
+       for (i <- 0 until 23) {
+        H_wire_below(i + 5) := LB(i).H_wire_out 
+      }
     }
     // Driven from left end (shift right)
     is(Bits(2, width=2)){
-
+      for (i <- 0 until 23) {
+        H_wire_below(i + 9) := LB(i).H_wire_out 
+      }
     }
   }
+
+  // Output H wire
+  for (i <- 0 until 23) {
+    io.H_out(i) := LB(i).H_wire_out    
+    LB(i).H_out_above := io.H_out_above(i)
+  }
+
 }
+

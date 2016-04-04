@@ -60,13 +60,13 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   val D_sel = Bool()
   D_sel := io.config(11).toBool
 
- val H_sel = Bool()
+  val H_sel = Bool()
   H_sel := io.config(10).toBool
 
- val G_sel = Bool()
+  val G_sel = Bool()
   G_sel := io.config(9).toBool
 
- val V_sel = Bool()
+  val V_sel = Bool()
   V_sel := io.config(8).toBool
 
   io.config_G_out := io.config(7,5)
