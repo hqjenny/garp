@@ -136,12 +136,15 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     }
   }
 
-  /*val GWireBulk = Vec.fill(G){Module(new GWireModule()).io}
-  for (i <- 0 until 4) {
+  val GWireBulk = Vec.fill(G){Module(new GWireModule()).io}
+  val GWireBB = Vec.fill(G){Module(new LoopWireBlackBox()).io}
+  for (i <- 0 until G) {
     GWireBulk(i).G_in := G_wire_outs
     GWireBulk(i).en := G_wire_below_en(i)
-    G_wire_below(i) := GWireBulk(i).G_out
-  }*/
+    // Blackbox G wire connection
+    GWireBB(i).in := GWireBulk(i).G_out 
+    G_wire_below(i) := GWireBB(i).out 
+  }
 
   // V wires
   for (i <- 0 until 23) {
@@ -157,27 +160,37 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     }
   }
   
+  val HWireBB = Vec.fill(33){Module(new LoopWireBlackBox()).io}
+  
+
+  for (i <- 0 until 33){
+    HWireBB(i).in := Bits(0, width=2)
+  }
   // H wires
-  /*switch(CB.Hdir){
+  switch(CB.Hdir){
     // Driven from right end (shift left)
     is(Bits(0, width=2)){
       for (i <- 0 until 23) {
-        H_wire_below(i + 1) := LB(i).H_wire_out 
+        HWireBB(i + 1).in := LB(i).H_wire_out 
       }
     }
     // Driven from center
     is(Bits(1, width=2)){
        for (i <- 0 until 23) {
-        H_wire_below(i + 5) := LB(i).H_wire_out 
+        HWireBB(i + 5).in := LB(i).H_wire_out 
       }
     }
     // Driven from left end (shift right)
     is(Bits(2, width=2)){
       for (i <- 0 until 23) {
-        H_wire_below(i + 9) := LB(i).H_wire_out 
+        HWireBB(i + 9).in := LB(i).H_wire_out 
       }
     }
-  }*/
+  }
+
+  for (i <- 0 until 33){
+    H_wire_below(i) := HWireBB(i).out
+  }
 
   // Output H wire
   for (i <- 0 until 23) {

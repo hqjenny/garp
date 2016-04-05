@@ -13,8 +13,8 @@ blackbox_verilog_src = $(addprefix $(base_dir)/src/main/verilog/,$(blackbox_file
 
 sim_vsrcs = \
 	$(build_dir)/generated-src/$(TOP).$(CONFIG).v \
-    $(build_dir)/generated-src/$(TOP).$(CONFIG)-harness.v \
-    $(blackbox_verilog_src) \       #for blackboxed files
+    	$(build_dir)/generated-src/$(TOP).$(CONFIG)-harness.v \
+    	$(blackbox_verilog_src) \
 	#$(build_dir)/generated-src/memdessertMemDessert.v \
 	#$(vlsi_dir)/testbench/riscvInst.vh \
 	#$(vlsi_dir)/testbench/rocketConst.vh \
