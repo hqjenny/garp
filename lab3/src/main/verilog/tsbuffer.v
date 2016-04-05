@@ -6,9 +6,7 @@ module tsbuffer(
 	input in,
 	output out
 );
-
-assign b = (en) ? in : 1'bz;
-
+bufif1 (out,in,en);
 endmodule
 
 

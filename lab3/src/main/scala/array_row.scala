@@ -136,12 +136,12 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     }
   }
 
-  val GWireBulk = Vec.fill(G){Module(new GWireModule()).io}
+  /*val GWireBulk = Vec.fill(G){Module(new GWireModule()).io}
   for (i <- 0 until 4) {
     GWireBulk(i).G_in := G_wire_outs
     GWireBulk(i).en := G_wire_below_en(i)
     G_wire_below(i) := GWireBulk(i).G_out
-  }
+  }*/
 
   // V wires
   for (i <- 0 until 23) {
@@ -158,7 +158,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   }
   
   // H wires
-  switch(CB.Hdir){
+  /*switch(CB.Hdir){
     // Driven from right end (shift left)
     is(Bits(0, width=2)){
       for (i <- 0 until 23) {
@@ -177,7 +177,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
         H_wire_below(i + 9) := LB(i).H_wire_out 
       }
     }
-  }
+  }*/
 
   // Output H wire
   for (i <- 0 until 23) {

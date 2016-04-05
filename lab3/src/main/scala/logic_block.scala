@@ -70,7 +70,6 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   V_sel := io.config(8).toBool
 
   io.config_G_out := io.config(7,5)
-
   io.config_V_out := io.config(4,0)
 
   val store_Z = Bits(width=1)
