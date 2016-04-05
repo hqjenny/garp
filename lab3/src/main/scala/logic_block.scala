@@ -223,8 +223,26 @@ object replace_range {
   }
 }
 
+object shift_invert {
+  def apply(input:Int, shift_in:Int, prime:Int) : Int = {
+    if (prime == 0) {
+      return input
+    } else if (prime == 1) {
+      // Inverts the lower two bits
+      return input ^ 3
+    } else if (prime == 2) {
+      return ((input & 1) << 1) | shift_in
+    } else {
+      return (((input & 1) << 1) | shift_in) ^ 3
+    }
+  }
+}
+
 class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
-  println("Basic test to pass signal from input wire to output wire")
+  val rand = scala.util.Random
+  val TRIALS = 10
+
+  println("\n=====Basic Propagation Test=====")
   // Pass an incoming V wire signal from D to an H wire
   var encoding = BigInt(0x0000000000000000L)
   // Set D to be V wire pair 0
@@ -235,15 +253,14 @@ class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
   peek(c.io.H_wire_out)
   poke(c.io.config, encoding)
   poke(c.io.V_wire_in(0), 2)
-  peek(c.io.H_wire_out)
+  expect(c.io.H_wire_out, 2)
 
-  println("Table Mode Tests")
+
+  println("\n=====Table Mode Tests=====")
   encoding = BigInt(0x0000000000000000L)
   poke(c.io.config, encoding)
-  // Stet to table mode
-  replace_range(encoding, 0x0, 3, 13)
-  // Set table to a 4 way XOR
-  replace_range(encoding, 0x6996, 16, 16)
+  // Set to table mode
+  encoding = replace_range(encoding, 0x0, 3, 13)
   // Set A to be H wire pair 1 above and set A'
   encoding = replace_range(encoding, 0xA6, 8, 56)
   // Set B to be H wire pair 2 below and set B'
@@ -252,30 +269,154 @@ class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
   encoding = replace_range(encoding, 0xB2, 8, 40)
   // Set D to be V wire pair 0 and set D'
   encoding = replace_range(encoding, 0x7E, 8, 32)
-  peek(c.io.H_wire_out)
+
+  for (trial <- 1 to TRIALS) {
+    println("--Trial " + trial.toString + "--")
+    var inputs = new Array[Int](4)
+    for (i <- 0 until 4) {
+      inputs(i) = rand.nextInt(4)
+    }
+    println("Random Inputs: " + inputs.mkString(", "))
+    var table = rand.nextInt(0x10000)
+    var big_table = BigInt(table)
+    println("Random Table: 0x" + big_table.toString(16))
+    encoding = replace_range(encoding, table, 16, 16)
+    println("Encoding: 0x" + encoding.toString(16))
+    poke(c.io.config, encoding)
+    poke(c.io.H_wire_above_in(1), inputs(0))
+    poke(c.io.H_wire_below_in(2), inputs(1))
+    poke(c.io.G_wire_above_in(3), inputs(2))
+    poke(c.io.V_wire_in(0), inputs(3))
+    var upper_addr = 1 * (inputs(0) >> 1) + 2 * (inputs(1) >> 1) + 4 * (inputs(2) >> 1) + 8 * (inputs(3) >> 1)
+    var lower_addr = 1 * (inputs(0) & 1) + 2 * (inputs(1) & 1) + 4 * (inputs(2) & 1) + 8 * (inputs(3) & 1)
+    var upper_result = if(big_table.testBit(upper_addr)) 1 else 0
+    var lower_result = if(big_table.testBit(lower_addr)) 1 else 0
+    expect(c.io.H_wire_out, (upper_result << 1) | lower_result)
+    println("")
+  }
+
+
+  println("\n=====Split Table Mode Tests=====")
+  encoding = BigInt(0x0000000000000000L)
   poke(c.io.config, encoding)
-  poke(c.io.H_wire_above_in(1), 3)
-  poke(c.io.H_wire_below_in(2), 2)
-  poke(c.io.G_wire_above_in(3), 3)
-  poke(c.io.V_wire_in(0), 3)
-  peek(c.IN_MUX.X_in(0))
-  peek(c.io.H_wire_out)
-  poke(c.io.H_wire_above_in(1), 2)
-  poke(c.io.H_wire_below_in(2), 2)
-  poke(c.io.G_wire_above_in(3), 2)
-  poke(c.io.V_wire_in(0), 1)
-  peek(c.io.H_wire_out)
+  // Set to split table mode
+  encoding = replace_range(encoding, 0x1, 3, 13)
+  // Set A to be H wire pair 1 above and set A'
+  encoding = replace_range(encoding, 0xA6, 8, 56)
+  // Set B to be H wire pair 2 below and set B'
+  encoding = replace_range(encoding, 0xE2, 8, 48)
+  // Set C to be G wire pair 3 above and set C'
+  encoding = replace_range(encoding, 0xB2, 8, 40)
+  // Set D to be V wire pair 0 and set mx to 01
+  encoding = replace_range(encoding, 0x7D, 8, 32)
+
+  for (trial <- 1 to TRIALS) {
+    println("--Trial " + trial.toString + "--")
+    var inputs = new Array[Int](4)
+    for (i <- 0 until 4) {
+      inputs(i) = rand.nextInt(4)
+    }
+    println("Random Inputs: " + inputs.mkString(", "))
+    var table = rand.nextInt(0x10000)
+    var big_table = BigInt(table)
+    println("Random Table: 0x" + big_table.toString(16))
+    encoding = replace_range(encoding, table, 16, 16)
+    println("Encoding: 0x" + encoding.toString(16))
+    poke(c.io.config, encoding)
+    poke(c.io.H_wire_above_in(1), inputs(0))
+    poke(c.io.H_wire_below_in(2), inputs(1))
+    poke(c.io.G_wire_above_in(3), inputs(2))
+    poke(c.io.V_wire_in(0), inputs(3))
+    // Expect D' be 10 as seen by functional unit.
+    var upper_addr = 1 * (inputs(0) >> 1) + 2 * (inputs(1) >> 1) + 4 * (inputs(2) >> 1) + 8 * (1)
+    var lower_addr = 1 * (inputs(0) & 1) + 2 * (inputs(1) & 1) + 4 * (inputs(2) & 1) + 8 * (0)
+    var upper_result = if(big_table.testBit(upper_addr)) 1 else 0
+    var lower_result = if(big_table.testBit(lower_addr)) 1 else 0
+    expect(c.io.H_wire_out, (upper_result << 1) | lower_result)
+    println("")
+  }
 
 
-  println("Split Table Mode Tests")
+  println("\n=====Select Mode Tests=====")
+  encoding = BigInt(0x0000000000000000L)
+  poke(c.io.config, encoding)
+  // Set to select mode
+  encoding = replace_range(encoding, 0x2, 3, 13)
+  // Set A to be H wire pair 1 above and set A'
+  encoding = replace_range(encoding, 0x29, 6, 58)
+  // Set B to be H wire pair 2 below and set B'
+  encoding = replace_range(encoding, 0x38, 6, 50)
+  // Set C to be G wire pair 3 above and set C'
+  encoding = replace_range(encoding, 0x2C, 6, 42)
+  // Set D to be V wire pair 0 and set mx to 00
+  encoding = replace_range(encoding, 0x7C, 8, 32)
+  // Set table to predefined constant
+  encoding = replace_range(encoding, 0xCCCC, 16, 16)
 
-  println("Select Mode Tests")
+  for (trial <- 1 to TRIALS) {
+    println("--Trial " + trial.toString + "--")
+    var inputs = new Array[Int](4)
+    for (i <- 0 until 4) {
+      inputs(i) = rand.nextInt(4)
+    }
+    println("Random Inputs: " + inputs.mkString(", "))
+    var primes = new Array[Int](3)
+    for (i <- 0 until 3) {
+      primes(i) = rand.nextInt(4)
+    }
+    println("Random Primes: " + primes.mkString(", "))
+    var shift_ins = new Array[Int](3)
+    for (i <- 0 until 3) {
+      shift_ins(i) = rand.nextInt(2)
+    }
+    println("Random Shift Ins: " + shift_ins.mkString(", "))
+    var hout_above = rand.nextInt(4)
+    println("Hout Above: " + hout_above.toString)
+    var k = rand.nextInt(2)
+    println("k: " + k.toString)
+    encoding = replace_range(encoding, k, 1, 13)
+    encoding = replace_range(encoding, primes(0), 2, 56)
+    encoding = replace_range(encoding, primes(1), 2, 48)
+    encoding = replace_range(encoding, primes(2), 2, 40)
+    println("Encoding: 0x" + encoding.toString(16))
+    poke(c.io.config, encoding)
+    poke(c.io.H_wire_above_in(1), inputs(0))
+    poke(c.io.H_wire_below_in(2), inputs(1))
+    poke(c.io.G_wire_above_in(3), inputs(2))
+    poke(c.io.V_wire_in(0), inputs(3))
+    poke(c.io.shift_X_in(0), shift_ins(0))
+    poke(c.io.shift_X_in(1), shift_ins(1))
+    poke(c.io.shift_X_in(2), shift_ins(2))
+    poke(c.io.H_out_above, hout_above)
 
-  println("Partial Select Mode Tests")
+    var shift_outs = new Array[Int](3)
+    var intermediates = new Array[Int](3)
+    for (i <- 0 until 3) {
+      shift_outs(i) = inputs(i) >> 1
+      intermediates(i) = shift_invert(inputs(i), shift_ins(i) & k, primes(i))
+    }
+    var result = 0
+    if (intermediates(2) == 0) {
+      result = intermediates(0)
+    } else if (intermediates(2) == 1) {
+      result = intermediates(1)
+    } else if (intermediates(2) == 2) {
+      result = inputs(3)
+    } else {
+      result = hout_above
+    }
+    expect(c.io.H_wire_out, result)
+    expect(c.io.shift_X_out(0), shift_outs(0))
+    expect(c.io.shift_X_out(1), shift_outs(1))
+    expect(c.io.shift_X_out(2), shift_outs(2))
+    println("")
+  }
 
-  println("Carry Chain Mode Tests")
+  println("\n=====Partial Select Mode Tests=====")
 
-  println("Triple Add Mode Tests")
+  println("\n=====Carry Chain Mode Tests=====")
+
+  println("\n=====Triple Add Mode Tests=====")
 }
 
 object LogicBlockModuleMain {
