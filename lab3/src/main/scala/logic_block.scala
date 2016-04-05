@@ -79,7 +79,6 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   store_Z := io.store_en & (~io.mem_D_or_Z)
   store_D := io.store_en & io.mem_D_or_Z
   
-
   // Configuration bit for input A,B,C,D addresses
   val config_X_in = Vec.fill(4){Bits(width=6)}
   config_X_in(0) := io.config(63, 58) 
