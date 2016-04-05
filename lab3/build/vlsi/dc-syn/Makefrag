@@ -4,14 +4,14 @@
 
 # Verilog sources (do not include test harness!)
 
-#blackbox_srcs = $(wildcard $(base_dir)/rocket-chip/$(ROCKETCHIP_ADDONS)/src/main/verilog/*.v)
-#blackbox_srcs = $(wildcard $(base_dir)/rocket-chip/$(ROCKETCHIP_ADDONS)/src/main/verilog/*.v)
-#blackbox_files = $(notdir $(blackbox_srcs))
-#blackbox_verilog_src = $(addprefix src/verilog/,$(blackbox_files))
+blackbox_srcs = $(wildcard $(base_dir)/src/main/verilog/*.v)
+#$(info $$blackbox_srcs is [${blackbox_srcs}])
 
+blackbox_files = $(notdir $(blackbox_srcs))
+blackbox_verilog_src = $(addprefix $(base_dir)/src/main/verilog/,$(blackbox_files))
 dc_vsrcs = \
 	$(build_dir)/generated-src/$(TOP).$(CONFIG).v \
-	#$(blackbox_verilog_src) #for blackboxed files
+	$(blackbox_verilog_src) #for blackboxed files
 	
 
 # Specify what the toplevel verilog module is
@@ -61,7 +61,7 @@ dc_constraints_tcl = $(dc_setup_dir)/constraints.tcl
 dc_vars = \
 	set DESIGN_NAME                 "$(dc_toplevel)";\n \
 	set STRIP_PATH                  "$(dc_testharness)/$(dc_toplevelinst)";\n \
-	set ADDITIONAL_SEARCH_PATH      "$(cells_db_dir) $(srams_dir) $(build_dir)/generated-src";\n \
+	set ADDITIONAL_SEARCH_PATH      "$(cells_db_dir) $(srams_dir) $(blackbox_dir) $(build_dir)/generated-src";\n \
 	set TARGET_LIBRARY_FILES        "$(cells_db) $(srams_db)";\n \
 	set MW_REFERENCE_LIB_DIRS       "$(cells_mw) $(srams_mw)";\n \
 	set MIN_LIBRARY_FILES           "$(min_library)";\n \
