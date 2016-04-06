@@ -38,6 +38,8 @@ dc_clock_period = 0$(shell echo "scale=4; ${clock_period}*1.0" | bc)
 input_delay = 0.1
 output_delay = 0.1
 
+blackbox_dir = $(base_dir)/src/main/verilog/
+
 # filler_cells = FILL64BWP FILL32BWP FILL16BWP FILL8BWP FILL4BWP FILL3BWP FILL2BWP FILL1BWP
 filler_cells = SHFILL1 SHFILL2 SHFILL3 SHFILL64 SHFILL128 
 

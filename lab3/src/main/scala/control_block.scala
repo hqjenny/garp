@@ -32,6 +32,7 @@ class ControlMuxModule extends Module {
     val select = Bits(INPUT, width=6)
     val a = Bits(OUTPUT, width=2)
   }
+  io.a := Bits(0)
   // Select which set of H wires to use
   val h_wires = Mux(io.select(4), io.h_wire_below, io.h_wire_above)
   when (io.select(5) === Bits(0, width=1)) {
@@ -125,24 +126,24 @@ class ControlBlockModule extends Module {
   D_prime := (reducers(0).out & reducers(3).out).toBool
   
   // 1 Processor Mode 010 //
-  val proc_mode = Bool(false) 
+  val proc_mode = Bool() 
   proc_mode := (mode === Bits(2,width=3))
 
   // If the A' and C' inputs are both 1, the array clock counter is zeroed at the end of the current array clock cycle, thus halting array execution.
-  val zero_counter = Bool(false)
+  val zero_counter = Bool()
   zero_counter := proc_mode && A_prime && C_prime
 
   // If A' and D' are both 1, the main processor is forced to take an interrupt.
-  val en_interrupt = Bool(false)
+  val en_interrupt = Bool()
   en_interrupt := proc_mode && A_prime && D_prime 
 
   // 2 Memory Mode 110 // 
-  val mem_mode = Bool(false) 
+  val mem_mode = Bool() 
   mem_mode := (mode === Bits(6,width=3))
 
   // 2.1 Initial Step ////
   // A demand access to memory is initiated whenever A' and B ' are both 1.
-  val demand_access = Bool(false)
+  val demand_access = Bool()
   demand_access := mem_mode && A_prime && B_prime
 
   // p242
@@ -202,7 +203,7 @@ class ControlBlockModule extends Module {
 
   // The transfer step performs the actual movement of data, either simultaneously with the initiate step in the case of writes, or after the data has been read from memory.
   // The C' input to the control block decides, for each clock cycle, whether a transfer into or out of the row occurs on that cycle.
-  val transfer_access = Bool(false)
+  val transfer_access = Bool()
   transfer_access := mem_mode && A_prime && C_prime 
 
   // val load_transfer_access = Bool(false)

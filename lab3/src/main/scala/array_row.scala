@@ -9,6 +9,7 @@ class GWireModule(val W: Int=2) extends Module {
     val G_out = Bits(OUTPUT, width=W)
   }
 
+  io.G_out := Bits(0)
   for(i <- 0 until 23) {
     when(io.en(i).toBool){
       io.G_out := io.G_in(i) 
@@ -42,8 +43,6 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
 
     // Assume 1 mem bus is allowed
     val mem_bus_out = Vec.fill(23){Bits(OUTPUT, width=W)}
-
-
   }
   // 1 Control Blocks per row
   val CB = Module(new ControlBlockModule()).io
@@ -57,7 +56,16 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   val G_wire_below =  Vec.fill(G){Bits(width=W)}
   // 33 H Wires per row, 11 rows, 2 is not driven by anything  
   val H_wire_below =  Vec.fill(33){Bits(width=W)}
+  io.H_wire_below := H_wire_below
+  io.G_wire_below := G_wire_below
+  // Initialize H_wire_below
+  //for (i <- 0 until 33){
+    //H_wire_below(i) := Bits(0)
 
+  //}
+
+  H_wire_below := Bits(0,width=W*33)
+  
   // V Wires
   for (i <- 0 until 23) {
     for (j <- 0 until V) {
@@ -96,8 +104,10 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   }
 
   // config just for testing
-  for (i <- 1 until 23) {
-    LB(i).config := io.config(i)
+  CB.config := io.config(0)
+  for (i <- 0 until 23) {
+    // 22 - 0 : 1 - 23
+    LB(22-i).config := io.config(i+1)
   }
 
 
@@ -127,10 +137,13 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   }
 
   val GWireBulk = Vec.fill(G){Module(new GWireModule()).io}
-  for (i <- 0 until 4) {
+  val GWireBB = Vec.fill(G){Module(new LoopWireBlackBox()).io}
+  for (i <- 0 until G) {
     GWireBulk(i).G_in := G_wire_outs
     GWireBulk(i).en := G_wire_below_en(i)
-    G_wire_below(i) := GWireBulk(i).G_out
+    // Blackbox G wire connection
+    GWireBB(i).in := GWireBulk(i).G_out 
+    G_wire_below(i) := GWireBB(i).out 
   }
 
   // V wires
@@ -138,7 +151,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     when (LB(i).config_V_out(4).toBool) {
       switch(LB(i).config_V_out(3,0)) {
         for(j <- 0 until 16) {
-          is(Bits(j, width=2)) {
+          is(Bits(j, width=4)) {
             // j: 0 -> 3 en: 3 -> 0
             V_wire_en(15-j)(i)
           }
@@ -147,26 +160,36 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     }
   }
   
+  val HWireBB = Vec.fill(33){Module(new LoopWireBlackBox()).io}
+  
+
+  for (i <- 0 until 33){
+    HWireBB(i).in := Bits(0, width=2)
+  }
   // H wires
   switch(CB.Hdir){
     // Driven from right end (shift left)
     is(Bits(0, width=2)){
       for (i <- 0 until 23) {
-        H_wire_below(i + 1) := LB(i).H_wire_out 
+        HWireBB(i + 1).in := LB(i).H_wire_out 
       }
     }
     // Driven from center
     is(Bits(1, width=2)){
        for (i <- 0 until 23) {
-        H_wire_below(i + 5) := LB(i).H_wire_out 
+        HWireBB(i + 5).in := LB(i).H_wire_out 
       }
     }
     // Driven from left end (shift right)
     is(Bits(2, width=2)){
       for (i <- 0 until 23) {
-        H_wire_below(i + 9) := LB(i).H_wire_out 
+        HWireBB(i + 9).in := LB(i).H_wire_out 
       }
     }
+  }
+
+  for (i <- 0 until 33){
+    H_wire_below(i) := HWireBB(i).out
   }
 
   // Output H wire

@@ -2,7 +2,7 @@ package garp
 
 import Chisel._
 
-class tsbufferBlackBox() extends BlackBox() {
+class TSBufferBlackBox() extends BlackBox() {
   val io = new Bundle {
     val en = Bool(INPUT)
     val in = Bits(INPUT, 1)

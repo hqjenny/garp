@@ -4,25 +4,54 @@ import Chisel._
 
 
 
-class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4) extends Module {
+class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=3) extends Module {
   
 
   val io = new Bundle {
     val in = Vec.fill(4){Bits(INPUT, width=W)} 
     val sel =Vec.fill(4){Bits(INPUT, width=2)}
     val out =Vec.fill(4){Bits(OUTPUT, width=W)}
+    
+    val config = Vec.fill(24*R){Bits(INPUT, width=64)}
+
   }
 
-  val test = Vec.fill(4){Module(new TestBlockModule(W)).io}
+  //val test = Vec.fill(4){Module(new TestBlockModule(W)).io}
 
-  for (i <- 0 until 4){
-      test(i).in := io.in(i)
-      test(i).sel := io.sel(i)
-      io.out(i) := test(i).out 
+  //for (i <- 0 until 4){
+  //    test(i).in := io.in(i)
+  //    test(i).sel := io.sel(i)
+  //    io.out(i) := test(i).out 
+  //}
+
+  // Haven't figure out how to connect them 
+  val V_wire_in = Vec.fill(23*V){Bits(INPUT, width=W)}
+  val G_wire_above =  Vec.fill(G){Bits(INPUT, width=W)}
+
+  val row0 = Module(new ArrayRowModule(W, I=0)).io
+  val row1 = Module(new ArrayRowModule(W, I=1)).io
+  val row2 = Module(new ArrayRowModule(W, I=2)).io
+
+  row1.G_wire_above := row0.G_wire_below
+  row2.G_wire_above := row1.G_wire_below
+
+  row1.H_wire_above := row0.H_wire_below
+  row2.H_wire_above := row1.H_wire_below
+
+  row1.mem_bus_in := row0.mem_bus_out
+  row2.mem_bus_in := row1.mem_bus_out
+
+  row1.H_out_above := row0.H_out
+  row2.H_out_above := row1.H_out
+  
+  for (i <- 0 until 24){
+    row0.config(i) := io.config(0+i)    
+    row1.config(i) := io.config(24+i)   
+    row2.config(i) := io.config(48+i)   
+
   }
 
-
-
+  //row0.config := io.config(23,0)    
   /*val io = new Bundle { 
     // 16 2-bit input
     val V_wire_in = Vec.fill(V){Bits(INPUT, width=W)}
@@ -86,7 +115,7 @@ class DefaultConfig() extends Config {
 
 class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
-  poke(c.io.in(0), 1)
+  //poke(c.io.in(0), 1)
   //poke(c.io.H_out_above, 1)
 }
 
