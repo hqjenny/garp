@@ -307,6 +307,7 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
   resultfunct.V := lut_out(0)
   resultfunct.K := carrychain_out
   resultfunct.mx := mx
+  resultfunct.carry_out := carrychain.carry_out
   resultfunct_out := resultfunct.out
 
   // D_sel  

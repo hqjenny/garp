@@ -177,7 +177,8 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   }*/
  
   // Functional Unit
-  val FU = Module(new FunctionalUnitModule(W)).io
+  val FUpeek = Module(new FunctionalUnitModule(W))
+  val FU = FUpeek.io
   FU.config := io.config
   FU.X_in := X_in
   FU.shift_X_in := io.shift_X_in
@@ -233,6 +234,20 @@ object shift_invert {
       return ((input & 1) << 1) | shift_in
     } else {
       return (((input & 1) << 1) | shift_in) ^ 3
+    }
+  }
+}
+
+object crossbar {
+  def apply(input:Int, prime:Int) : Int = {
+    if (prime == 0) {
+      return ((input & 1) << 1) | (input & 1)
+    } else if (prime == 1) {
+      return ((input & 1) << 1) | (input >> 1)
+    } else if (prime == 2) {
+      return input
+    } else {
+      return (input & 2) | (input >> 1)
     }
   }
 }
@@ -412,8 +427,155 @@ class LogicBlockModuleTests(c: LogicBlockModule) extends Tester(c) {
   }
 
   println("\n=====Partial Select Mode Tests=====")
+  encoding = BigInt(0x0000000000000000L)
+  poke(c.io.config, encoding)
+  // Set to select mode
+  encoding = replace_range(encoding, 0x2, 3, 13)
+  // Set A to be H wire pair 1 above and set A'
+  encoding = replace_range(encoding, 0x29, 6, 58)
+  // Set B to be H wire pair 2 below and set B'
+  encoding = replace_range(encoding, 0x38, 6, 50)
+  // Set C to be G wire pair 3 above and set C'
+  encoding = replace_range(encoding, 0x2C, 6, 42)
+  // Set D to be V wire pair 0 and set mx to 01
+  encoding = replace_range(encoding, 0x7D, 8, 32)
+  // Set table to predefined constant
+  encoding = replace_range(encoding, 0xCCCC, 16, 16)
+
+  for (trial <- 1 to TRIALS) {
+    println("--Trial " + trial.toString + "--")
+    var inputs = new Array[Int](4)
+    for (i <- 0 until 4) {
+      inputs(i) = rand.nextInt(4)
+    }
+    println("Random Inputs: " + inputs.mkString(", "))
+    var primes = new Array[Int](3)
+    for (i <- 0 until 3) {
+      primes(i) = rand.nextInt(4)
+    }
+    println("Random Primes: " + primes.mkString(", "))
+    var shift_ins = new Array[Int](3)
+    for (i <- 0 until 3) {
+      shift_ins(i) = rand.nextInt(2)
+    }
+    println("Random Shift Ins: " + shift_ins.mkString(", "))
+    var k = rand.nextInt(2)
+    println("k: " + k.toString)
+    encoding = replace_range(encoding, k, 1, 13)
+    encoding = replace_range(encoding, primes(0), 2, 56)
+    encoding = replace_range(encoding, primes(1), 2, 48)
+    encoding = replace_range(encoding, primes(2), 2, 40)
+    println("Encoding: 0x" + encoding.toString(16))
+    poke(c.io.config, encoding)
+    poke(c.io.H_wire_above_in(1), inputs(0))
+    poke(c.io.H_wire_below_in(2), inputs(1))
+    poke(c.io.G_wire_above_in(3), inputs(2))
+    poke(c.io.V_wire_in(0), inputs(3))
+    poke(c.io.shift_X_in(0), shift_ins(0))
+    poke(c.io.shift_X_in(1), shift_ins(1))
+    poke(c.io.shift_X_in(2), shift_ins(2))
+
+    var shift_outs = new Array[Int](3)
+    var intermediates = new Array[Int](3)
+    for (i <- 0 until 3) {
+      shift_outs(i) = inputs(i) >> 1
+      intermediates(i) = shift_invert(inputs(i), shift_ins(i) & k, primes(i))
+    }
+    var result = 0
+    if (intermediates(2) == 0) {
+      result = intermediates(0)
+    } else if (intermediates(2) == 1) {
+      result = intermediates(1)
+    } else if (intermediates(2) == 2) {
+      result = inputs(1)
+    } else {
+      result = 0
+    }
+    expect(c.io.H_wire_out, result)
+    expect(c.io.shift_X_out(0), shift_outs(0))
+    expect(c.io.shift_X_out(1), shift_outs(1))
+    expect(c.io.shift_X_out(2), shift_outs(2))
+    println("")
+  }
 
   println("\n=====Carry Chain Mode Tests=====")
+  encoding = BigInt(0x0000000000000000L)
+  poke(c.io.config, encoding)
+  // Set to select mode
+  encoding = replace_range(encoding, 0x4, 3, 13)
+  // Set A to be H wire pair 1 above
+  encoding = replace_range(encoding, 0x29, 6, 58)
+  // Set B to be H wire pair 2 below
+  encoding = replace_range(encoding, 0x38, 6, 50)
+  // Set C to be G wire pair 3 above
+  encoding = replace_range(encoding, 0x2C, 6, 42)
+  // Set D to be V wire pair 0
+  encoding = replace_range(encoding, 0x1F, 6, 34)
+
+  for (trial <- 1 to TRIALS) {
+    println("--Trial " + trial.toString + "--")
+    var inputs = new Array[Int](4)
+    for (i <- 0 until 4) {
+      inputs(i) = rand.nextInt(4)
+    }
+    println("Random Inputs: " + inputs.mkString(", "))
+    var primes = new Array[Int](4)
+    for (i <- 0 until 4) {
+      primes(i) = rand.nextInt(4)
+    }
+    println("Random Primes and mx: " + primes.mkString(", "))
+    var carry_in = rand.nextInt(2)
+    println("Random Carry In: " + carry_in.toString)
+    var k = rand.nextInt(2)
+    println("k: " + k.toString)
+    encoding = replace_range(encoding, k, 1, 13)
+    encoding = replace_range(encoding, primes(0), 2, 56)
+    encoding = replace_range(encoding, primes(1), 2, 48)
+    encoding = replace_range(encoding, primes(2), 2, 40)
+    encoding = replace_range(encoding, primes(3), 2, 32)
+    var table = rand.nextInt(0x10000)
+    var big_table = BigInt(table)
+    println("Random Table: 0x" + big_table.toString(16))
+    encoding = replace_range(encoding, table, 16, 16)
+    println("Encoding: 0x" + encoding.toString(16))
+    poke(c.io.config, encoding)
+    poke(c.io.H_wire_above_in(1), inputs(0))
+    poke(c.io.H_wire_below_in(2), inputs(1))
+    poke(c.io.G_wire_above_in(3), inputs(2))
+    poke(c.io.V_wire_in(0), inputs(3))
+
+    poke(c.io.carry_in, carry_in)
+
+    var intermediates = new Array[Int](3)
+    for (i <- 0 until 3) {
+      intermediates(i) = crossbar(inputs(i), primes(i))
+    }
+    var upper_addr = 1 * (intermediates(0) >> 1) + 2 * (intermediates(1) >> 1) + 4 * (intermediates(2) >> 1)
+    var lower_addr = 1 * (intermediates(0) & 1) + 2 * (intermediates(1) & 1) + 4 * (intermediates(2) & 1)
+    var U_upper_result = if(big_table.testBit(upper_addr + 8)) 1 else 0
+    var V_upper_result = if(big_table.testBit(upper_addr)) 1 else 0
+    var U_lower_result = if(big_table.testBit(lower_addr + 8)) 1 else 0
+    var V_lower_result = if(big_table.testBit(lower_addr)) 1 else 0
+    var U = (U_upper_result << 1) | U_lower_result
+    var V = (V_upper_result << 1) | V_lower_result
+    var K0 = (carry_in & k)
+    var K1 = if(U_lower_result == 1) K0 else V_lower_result
+    var K = (K1 << 1) | K0
+    var carry_out = if(U_upper_result == 1) K1 else V_upper_result
+    var result = 0
+    if (primes(3) == 0) {
+      result = V
+    } else if (primes(3) == 1) {
+      result = carry_out * 3
+    } else if (primes(3) == 2) {
+      result = U ^ K
+    } else {
+      result = (U ^ K) ^ 3
+    }
+    expect(c.io.H_wire_out, result)
+    expect(c.io.carry_out, carry_out)
+    println("")
+  }
 
   println("\n=====Triple Add Mode Tests=====")
 }
