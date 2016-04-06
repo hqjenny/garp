@@ -1,10 +1,11 @@
 package garp
 
 import Chisel._
+import Array._
+import java.math.BigInteger
 
 
-
-class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=3) extends Module {
+class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=2) extends Module {
   
 
   val io = new Bundle {
@@ -28,26 +29,27 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   val V_wire_in = Vec.fill(23*V){Bits(INPUT, width=W)}
   val G_wire_above =  Vec.fill(G){Bits(INPUT, width=W)}
 
+
   val row0 = Module(new ArrayRowModule(W, I=0)).io
   val row1 = Module(new ArrayRowModule(W, I=1)).io
-  val row2 = Module(new ArrayRowModule(W, I=2)).io
+  //val row2 = Module(new ArrayRowModule(W, I=2)).io
 
   row1.G_wire_above := row0.G_wire_below
-  row2.G_wire_above := row1.G_wire_below
+  //row2.G_wire_above := row1.G_wire_below
 
   row1.H_wire_above := row0.H_wire_below
-  row2.H_wire_above := row1.H_wire_below
+  //row2.H_wire_above := row1.H_wire_below
 
   row1.mem_bus_in := row0.mem_bus_out
-  row2.mem_bus_in := row1.mem_bus_out
+  //row2.mem_bus_in := row1.mem_bus_out
 
   row1.H_out_above := row0.H_out
-  row2.H_out_above := row1.H_out
+  //row2.H_out_above := row1.H_out
   
   for (i <- 0 until 24){
     row0.config(i) := io.config(0+i)    
     row1.config(i) := io.config(24+i)   
-    row2.config(i) := io.config(48+i)   
+    //row2.config(i) := io.config(48+i)   
 
   }
 
@@ -117,6 +119,30 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
   //poke(c.io.in(0), 1)
   //poke(c.io.H_out_above, 1)
+
+  val source = scala.io.Source.fromFile("src/main/config/test.config")
+  val lines = try source.mkString finally source.close()
+  val list = lines.split('\n').flatMap(x => x.split(',').map(x => x.trim))
+  val list_strip = list.slice(2, list.length-1).map(x => x.replaceFirst("0x",""))
+  var config = new Array[BigInt](0)
+  for(i <- 0 until list_strip.length){
+    if(i%2 != 0){
+      config = config :+ new BigInt(new BigInteger( list_strip(i-1)+list_strip(i), 16)) 
+    }
+  }
+  println(list_strip)
+  for(i <- 0 until config.length){
+    printf("%x ", config(i))
+  }
+
+  poke(c.io.config, config)
+  peek(c.io.config)
+  step(1)
+
+  // Input config to the array
+
+
+
 }
 
 
