@@ -272,7 +272,7 @@ class FunctionalUnitModule(val W: Int=2) extends Module {
   }
   
   // CarrySaveAdder
-  csa.shift_carry_in := io.shift_carry_in
+  csa.shift_carry_in := Mux(mode(0).toBool, io.shift_carry_in, Bits(0, width=1))
   csa.in := shiftinvert_out
   csa_out_sum := csa.sum
   csa_out_carry := csa.carry
