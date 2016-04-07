@@ -40,6 +40,11 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
 
     // Port for testing 
     val config = Vec.fill(24){Bits(INPUT, width=64)}
+    val Z_in = Vec.fill(23){Bits(INPUT, width=W)}
+    val D_in = Vec.fill(23){Bits(INPUT, width=W)}
+    val Z_out = Vec.fill(23){Bits(OUTPUT, width=W)}
+    val D_out = Vec.fill(23){Bits(OUTPUT, width=W)}
+    val test = Bool(INPUT)
 
     // Assume 1 mem bus is allowed
     val mem_bus_out = Vec.fill(23){Bits(OUTPUT, width=W)}
@@ -108,6 +113,8 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   for (i <- 0 until 23) {
     // 22 - 0 : 1 - 23
     LB(22-i).config := io.config(i+1)
+    //LB(22-i).Z_in := io.Z_in(i)
+    //LB(22-i).D_in := io.D_in(i)
   }
 
 
