@@ -35,6 +35,11 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
 
     // Configuration
     val config = Bits(INPUT, width=64)
+    val Z_in = Bits(INPUT, width=W)
+    val D_in = Bits(INPUT, width=W)
+    val Z_out = Bits(OUTPUT, width=W)
+    val D_out = Bits(OUTPUT, width=W)
+    val test = Bool(INPUT)
 
     val mem_bus_out = Bits(OUTPUT, width=W)
     val V_wire_out = Bits(OUTPUT, width=W)
@@ -200,10 +205,18 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   when(Z_sel){
     Z_reg := Z_reg_in
   }
-
+  when(io.test){
+    Z_reg := io.Z_in
+  }
   when(D_sel){
     D_reg := D_reg_in
   }
+  when(io.test){
+    D_reg := io.D_in
+  }
+
+  io.Z_out := Z_reg
+  io.D_out := D_reg
 
   io.mem_bus_out := Mux(io.mem_D_or_Z.toBool, D_reg, Z_reg)
   

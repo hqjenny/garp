@@ -14,6 +14,11 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     val out =Vec.fill(4){Bits(OUTPUT, width=W)}
     
     val config = Vec.fill(24*R){Bits(INPUT, width=64)}
+    val Z_in = Vec.fill(23*R){Bits(INPUT, width=W)}
+    val D_in = Vec.fill(23*R){Bits(INPUT, width=W)}
+    val Z_out = Vec.fill(23*R){Bits(OUTPUT, width=W)}
+    val D_out = Vec.fill(23*R){Bits(OUTPUT, width=W)}
+    val test = Bool(INPUT)
 
   }
 
@@ -50,9 +55,23 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     row0.config(i) := io.config(0+i)    
     row1.config(i) := io.config(24+i)   
     //row2.config(i) := io.config(48+i)   
-
   }
 
+  row0.test := io.test
+  row1.test := io.test
+
+  for (i <- 0 until 23){
+    row0.Z_in(i) := io.Z_in(0+i)
+    row0.D_in(i) := io.D_in(0+i)
+    row1.Z_in(i) := io.Z_in(23+i)
+    row1.D_in(i) := io.D_in(23+i)
+  
+    io.Z_out(i) := row0.Z_out(i)
+    io.D_out(i) := row0.D_out(i)
+    io.Z_out(23+i) := row1.Z_out(i)
+    io.D_out(23+i) := row1.D_out(i)
+  }
+    
   //row0.config := io.config(23,0)    
   /*val io = new Bundle { 
     // 16 2-bit input

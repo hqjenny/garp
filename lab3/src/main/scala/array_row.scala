@@ -113,8 +113,15 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   for (i <- 0 until 23) {
     // 22 - 0 : 1 - 23
     LB(22-i).config := io.config(i+1)
-    //LB(22-i).Z_in := io.Z_in(i)
-    //LB(22-i).D_in := io.D_in(i)
+  }
+
+  // TEST
+  for (i <- 1 until 23) {
+    LB(i).Z_in := io.Z_in(i)
+    LB(i).D_in := io.D_in(i)
+    LB(i).test := Bool(true)
+    io.Z_out := LB(i).Z_out
+    io.D_out := LB(i).D_out
   }
 
 
