@@ -57,9 +57,6 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     //row2.config(i) := io.config(48+i)   
   }
 
-  row0.test := io.test
-  row1.test := io.test
-
   for (i <- 0 until 23){
     row0.Z_in(i) := io.Z_in(0+i)
     row0.D_in(i) := io.D_in(0+i)
@@ -193,6 +190,19 @@ object print_input {
   } 
 }
 
+
+object combine_array {
+  def apply(c:Array[BigInt], s:Int) : BigInt = {
+    var a = BigInt(0)
+    for(i <- (0 to (s -1)).reverse){
+      //val index = s - 1 - i
+      //printf("%x ", a)
+      a = (c(i) << (i << 1)) | a 
+    }
+    return a
+  }
+}
+
 object print_config {
   def apply(c:BigInt) : Unit = {
     val A_in = range(c, 63, 58)
@@ -270,12 +280,49 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   // Print all config
   config.map(x => print_config(x))
 
-  poke(c.io.config, config)
-  peek(c.io.config)
+  var Z_in = Array.fill(c.R*23){BigInt(0)}
+  var D_in = Array.fill(c.R*23){BigInt(0)}
+  //for(i <- 4  until 20){
+  for(i <- 0 until 23){
+    Z_in(i) = BigInt(2)
+    D_in(i) = BigInt(1)
+  }
+
+  poke(c.io.Z_in, Z_in)
+  poke(c.io.D_in, D_in)
+  poke(c.io.test, 1)
   step(1)
+  poke(c.io.config, config)
 
+  step(1)
+  //peek(c.io.config)
+  // ATTENTION: peed returns an array with reverse indexing 
+  val Z_out_array = peek(c.io.Z_out).reverse
+  val D_out_array = peek(c.io.D_out).reverse
 
+  //for(i <- 0 until 23){
+  //  printf("Z_out %d %x\t", i , Z_out_array(i))
+  //}
+  
+  for (i <- 0 until c.R){
+    printf("Z_out(%d) ", i)
+    val Z = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", Z);
 
+    printf("D_out(%d) ", i)
+    val D = combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D);
+  }
+  //printf("Hwire %x\n", c.row0.H_wire_below(0).toUInt())
+  val H_wire_below = peek(c.row0.H_wire_below).reverse
+  for(i <- 0 until 33){
+    printf("%x\t", H_wire_below(i))
+  }
+
+  val H_wire_above = peek(c.row1.H_wire_above).reverse
+  for(i <- 0 until 33){
+    printf("%x\t", H_wire_above(i))
+  }
 
 }
 

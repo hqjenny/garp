@@ -204,14 +204,12 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
     // Alternatively, a register can be bypassed on output, in which case it never latches except when it is written to via a memory bus.
   when(Z_sel){
     Z_reg := Z_reg_in
-  }
-  when(io.test){
+  }.elsewhen(io.test){
     Z_reg := io.Z_in
   }
   when(D_sel){
     D_reg := D_reg_in
-  }
-  when(io.test){
+  }.elsewhen(io.test){
     D_reg := io.D_in
   }
 

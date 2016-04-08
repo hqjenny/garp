@@ -116,12 +116,12 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   }
 
   // TEST
-  for (i <- 1 until 23) {
+  for (i <- 0 until 23) {
     LB(i).Z_in := io.Z_in(i)
     LB(i).D_in := io.D_in(i)
-    LB(i).test := Bool(true)
-    io.Z_out := LB(i).Z_out
-    io.D_out := LB(i).D_out
+    LB(i).test := io.test
+    io.Z_out(i) := LB(i).Z_out
+    io.D_out(i) := LB(i).D_out
   }
 
 
@@ -185,19 +185,22 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     // Driven from right end (shift left)
     is(Bits(0, width=2)){
       for (i <- 0 until 23) {
-        HWireBB(i + 1).in := LB(i).H_wire_out 
+        //HWireBB(i + 1).in := LB(i).H_wire_out 
+        HWireBB(23 - i).in := LB(i).H_wire_out 
       }
     }
     // Driven from center
     is(Bits(1, width=2)){
        for (i <- 0 until 23) {
-        HWireBB(i + 5).in := LB(i).H_wire_out 
+        //HWireBB(i + 5).in := LB(i).H_wire_out 
+        HWireBB(27 - i).in := LB(i).H_wire_out 
       }
     }
     // Driven from left end (shift right)
     is(Bits(2, width=2)){
       for (i <- 0 until 23) {
-        HWireBB(i + 9).in := LB(i).H_wire_out 
+        //HWireBB(i + 9).in := LB(i).H_wire_out 
+        HWireBB(31 - i).in := LB(i).H_wire_out 
       }
     }
   }
