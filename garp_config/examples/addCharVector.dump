@@ -1,0 +1,67 @@
+row 0:
+  control:
+    A: IN_CONSTANT 2 PERTURB_11
+    B: IN_CONSTANT 2 PERTURB_11
+    C: IN_HCOL 22 PERTURB_10
+    D: IN_CONSTANT 0 PERTURB_10
+    mode: MODE_MEMORY_QUEUE
+    queueNum: 0
+    data: 8 bus: SELECT_D 2
+    Gout: 7
+    Hdir: HWIRES_CENTER
+
+  col 4:
+    A: IN_ZREG 0 PERTURB_10
+    B: IN_DREG 0 PERTURB_10
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_10
+    function: MODE_CARRY:0 66AA RESULT_U_XOR_K
+    bufferZ: 1 bufferD: 0
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 5:
+    A: IN_ZREG 0 PERTURB_10
+    B: IN_DREG 0 PERTURB_10
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_10
+    function: MODE_CARRY 66AA RESULT_U_XOR_K
+    bufferZ: 1 bufferD: 0
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 6:
+    A: IN_ZREG 0 PERTURB_10
+    B: IN_DREG 0 PERTURB_10
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_10
+    function: MODE_CARRY 66AA RESULT_U_XOR_K
+    bufferZ: 1 bufferD: 0
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 7:
+    A: IN_ZREG 0 PERTURB_10
+    B: IN_DREG 0 PERTURB_10
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_10
+    function: MODE_CARRY 66AA RESULT_U_XOR_K
+    bufferZ: 1 bufferD: 0
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 22:
+    A: IN_DREG 0 PERTURB_10
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT AAAA
+    bufferZ: 1 bufferD: 0
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+

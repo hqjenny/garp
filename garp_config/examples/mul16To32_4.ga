@@ -1,0 +1,97 @@
+
+-------------------------------------------------------------------------------
+--0
+row .a:
+{
+
+--Input .a.
+ 4-11:	D(Zreg),Vout(D);
+
+}
+
+-------------------------------------------------------------------------------
+--1
+row .b:
+{
+
+--Input .b.
+ 4-11:	D(Zreg),Vout(D);
+
+}
+
+-------------------------------------------------------------------------------
+--2
+row .partial0:
+{
+
+--Buffer bottom 4 bits of multiplier .b.
+ 4:	D(.shiftedB),bufferD,Gout(D,global0);
+ 5:	D(.shiftedB),bufferD,Gout(D,global1);
+
+--Triple multiplicand .a.
+ 4:	shiftzeroin;
+ 4-11:	B(.a,shift1);
+12:	B(shift1);
+ 4-12:	A(.a),add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+--Perform partial product selection for lower pair of multiplier bits.
+13-20:	B(.aDelayed,shift1);
+21:	B(shift1);
+13-21:	A(right9),C(global1,~),partialselect,bufferZ,Vout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+--3
+row .aDelayed:
+{
+
+--Delayed .a.
+ 4-11:	D(.a),Hout(D);
+13-20:	D(right9),bufferD,Vout(D);
+
+--Perform partial product selection for higher pair of multiplier bits.
+13-20:	B(Dreg,shift1);
+21:	B(shift1);
+13-21:	A(aboveright9),C(aboveglobal0,~),partialselect,bufferZ,Hout(Z);
+
+--7-state machine controlling shifting of .b.
+ 0- 2:	A(left1,lo),B(self,hi),functionhi(A),functionlo(B),bufferZ,Hout(Z);
+ 3:	A(right3,hi),B(self,hi),functionhi(A),functionlo(B),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+--4
+row .shiftedB:
+{
+
+{*** REPLACE WITH CONTROLLING STATE MACHINE. ***}
+--Control lines.
+ 3:	D(Dreg),Gout(D,global0);
+
+--Input .b.  After first cycle, shift .b down 4 bits per cycle.
+ 4-11:	A(.b),B(Dreg),C(abovecol3,hi),function((C&A)|(~C&B)),Hout(Z),Vout(Z);
+ 4-9:	D(left2),bufferD;
+
+--Add partial products to form partial product from 4 multiplier bits.
+12:	shiftzeroin;
+13-21:	B(.partial0);
+12-20:	A(aboveleft1);
+12-21:	U(A^B),V(B),result(U^K),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+--5
+row :
+{
+
+--Add partial product into running sum.
+4:	shiftzeroin;
+10-19:	B(aboveleft2);
+4-17:	A(left2);
+4-19:	D(aboveglobal0),C(Dreg),U(~C&(A^B)),V(~C&B),result(U^K),bufferZ;
+
+}
+

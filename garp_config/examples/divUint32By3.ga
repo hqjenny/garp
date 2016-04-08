@@ -1,0 +1,54 @@
+
+-------------------------------------------------------------------------------
+row:  --0
+{
+
+ 4-19:	A(Zreg),function(A),Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+row :  --1
+{
+
+ 0:	shiftzeroin;
+ 2-17:	C(aboveleft2);
+ 3-18:	B(aboveleft1);
+ 4-19:	A(above);
+ 0-20:	add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+row :  --2
+{
+
+ 0:	shiftzeroin;
+ 0-14:	C(aboveleft6);
+ 0-17:	B(aboveleft3);
+ 0-20:	A(above),add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+row :  --3
+{
+
+ 0:	shiftzeroin;
+ 4:	C(01);
+ 0-11:	B(aboveleft9);
+ 0-20:	A(above),add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+--Shift previous row right by 2 bits, discarding shifted-off bits.
+row :  --4
+{
+
+ 4-19:	A(aboveleft1),function(A),bufferZ;
+
+}
+
+-------------------------------------------------------------------------------
+

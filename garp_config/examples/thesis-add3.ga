@@ -1,0 +1,18 @@
+
+row .a: --Row 0
+{
+--Send Z registers onto vertical wires.
+ 4-19:  A(Zreg),function(A),bufferZ,Vout(Z);
+--Send D registers onto horizontal wires below.
+ 4-19:  D(Dreg),bufferD,Hout(D);
+}
+
+row :   --Row 1
+{
+ 4-19:  D(Dreg),bufferD;
+--Add D registers and values from row 0; latch result in Z registers.
+ 4:     shiftzeroin;
+ 4-19:  A(.a),B(above),C(Dreg),
+         add3,U(carry^sum),V(sum),result(U^K),bufferZ;
+}
+

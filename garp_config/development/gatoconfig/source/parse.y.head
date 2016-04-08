@@ -1,0 +1,16 @@
+
+%{
+
+#include <stdbool.h>
+#include "platform.h"
+#include "errorMessages.h"
+#include "tokens.h"
+#include "tokenize.h"
+#include "parse.h"
+
+bool debugParse;
+
+tokenT *parseTokenTree;
+
+%}
+

@@ -1,0 +1,45 @@
+
+-------------------------------------------------------------------------------
+row :  --Row 0
+{
+
+ 4-19:	D(Zreg);
+ 4-15:	Hout(D);
+16:	Gout(D,global0);
+17:	Gout(D,global1);
+18:	Gout(D,global2);
+19:	Gout(D,global3);
+
+}
+
+-------------------------------------------------------------------------------
+row :  --Row 1
+{
+
+ 4-19:	D(above);
+ 4:	Gout(D,global0);
+ 5:	Gout(D,global1);
+ 6:	Gout(D,global2);
+ 7:	Gout(D,global3);
+ 8-11:	Hout(D);
+
+ 4:	A(aboveglobal3,swap);
+ 5:	A(aboveglobal2,swap);
+ 6:	A(aboveglobal1,swap);
+ 7:	A(aboveglobal0,swap);
+ 8:	A(abovecol15,swap);
+ 9:	A(abovecol14,swap);
+10:	A(abovecol13,swap);
+11:	A(abovecol12,swap);
+12:	A(col11,swap);
+13:	A(col10,swap);
+14:	A(col9,swap);
+15:	A(col8,swap);
+16:	A(global3,swap);
+17:	A(global2,swap);
+18:	A(global1,swap);
+19:	A(global0,swap);
+ 4-19:	function(A),bufferZ;
+
+}
+

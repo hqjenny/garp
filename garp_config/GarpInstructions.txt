@@ -1,0 +1,25 @@
+
+-------------------------------------------------------------------------------
+Instruction Summary
+
+gaconf	rt
+gaconfo	rt,rd,count
+gaalloc	rt
+gareset
+gacinv	rt
+
+mtga	rt,row,zd,count
+mfga	rt,row,zd,count
+mtgav	rt,rd,zd
+mfgav	rt,rd,zd
+mtga2	rt,rd,num,count
+
+gabump	rd			--Clock bit 31 is infinity bit.
+gastop	rt
+bgat	__
+bgaf	__
+
+cfga	rd,zt
+gasave	rt
+garestore rt
+

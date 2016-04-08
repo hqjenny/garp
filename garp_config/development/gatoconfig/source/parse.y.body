@@ -1,0 +1,234 @@
+
+%start config
+
+%%
+
+expressionItem
+	: L_NUMBER
+	| L_BINARY
+	| L_NAME
+	;
+
+expressionA
+	: expressionItem
+	| TILDE expressionA
+	  {
+	    $$ = linkTokensA( renameToken( $1, OP_NOT ), $2 );
+	  }
+	| LEFTPARENTHESIS expression RIGHTPARENTHESIS
+	  {
+	    $$ = $2;
+	    freeToken( $1 );
+	    freeToken( $3 );
+	  }
+	;
+
+expressionB
+	: expressionA
+	| expressionB STAR expressionA
+	  {
+	    $$ = linkTokensAB( renameToken( $2, OP_TIMES ), $1, $3 );
+	  }
+	;
+
+expressionC
+	: expressionB
+	| expressionC AMPERSAND expressionB
+	  {
+	    $$ = linkTokensAB( renameToken( $2, OP_AND ), $1, $3 );
+	  }
+	;
+
+expressionD
+	: expressionC
+	| expressionD CARET expressionC
+	  {
+	    $$ = linkTokensAB( renameToken( $2, OP_XOR ), $1, $3 );
+	  }
+	;
+
+expressionE
+	: expressionD
+	| expressionE VERTICALBAR expressionD
+	  {
+	    $$ = linkTokensAB( renameToken( $2, OP_OR ), $1, $3 );
+	  }
+	;
+
+expression
+	: TILDE
+	  {
+	    $$ = renameToken( $1, OP_NOT );
+	  }
+	| L_DOTTEDNAME
+	| expressionE
+	;
+
+expressionCommaSeq
+	: expression
+	| expression COMMA expressionCommaSeq
+	  {
+	    $$ = linkTokensT( $1, $3 );
+	    freeToken( $2 );
+	  }
+	;
+
+item	: L_NAME
+	  {
+	    $$ = renameToken( $1, OP_ITEM );
+	  }
+	| L_NAME LEFTPARENTHESIS RIGHTPARENTHESIS
+	  {
+	    $$ = renameToken( $1, OP_ITEMWITHARGS );
+	    freeToken( $2 );
+	    freeToken( $3 );
+	  }
+	| L_NAME LEFTPARENTHESIS expressionCommaSeq RIGHTPARENTHESIS
+	  {
+	    $$ = linkTokensA( renameToken( $1, OP_ITEMWITHARGS ), $3 );
+	    freeToken( $2 );
+	    freeToken( $4 );
+	  }
+	;
+
+itemCommaSeq
+	: item
+	| item COMMA itemCommaSeq
+	  {
+	    $$ = linkTokensT( $1, $3 );
+	    freeToken( $2 );
+	  }
+	;
+
+number	: L_BINARY
+	  {
+	    $$ = renameToken( $1, L_NUMBER );
+	    switch ( $1->v.m ) {
+	     case 0:
+	     case 1:
+	        $$->v.n = $1->v.m;
+	        break;
+	     case 2:
+	     case 3:
+	        $$->v.n = 8 + $1->v.m;
+	        break;
+	    }
+	  }
+	| L_NUMBER
+	;
+
+colName	: L_DOTTEDNAME
+	| colName EQUALSSIGN L_DOTTEDNAME
+	  {
+	    $$ = linkTokensT( $3, $1 );
+	    freeToken( $2 );
+	  }
+	;
+
+colIndex
+	: number
+	| colName EQUALSSIGN number
+	  {
+	    $$ = linkTokensA( $3, $1 );
+	    freeToken( $2 );
+	  }
+	| number MINUSSIGN number
+	  {
+	    $$ = linkTokensAB( renameToken( $2, OP_COLRANGE ), $1, $3 );
+	  }
+	;
+
+colIndexCommaSeq
+	: colIndex
+	| colIndex COMMA colIndexCommaSeq
+	  {
+	    $$ = linkTokensT( $1, $3 );
+	    freeToken( $2 );
+	  }
+	;
+
+colIndices
+	: colIndexCommaSeq
+	| L_NAME
+	;
+
+col	: colIndices COLON SEMICOLON
+	  {
+	    $$ = linkTokensA( renameToken( $2, OP_LOGICBLOCK ), $1 );
+	    freeToken( $3 );
+	  }
+	| colIndices COLON itemCommaSeq SEMICOLON
+	  {
+	    $$ = linkTokensAB( renameToken( $2, OP_LOGICBLOCK ), $1, $3 );
+	    freeToken( $4 );
+	  }
+	| colIndices COLON L_DOTTEDNAME EQUALSSIGN number SEMICOLON
+	  {
+	    $$ = linkTokensAB(
+	             renameToken( $2, OP_LOGICBLOCK ),
+	             $1,
+	             linkTokensA( $5, $3 )
+	         );
+	    freeToken( $4 );
+	    freeToken( $6 );
+	  }
+	;
+
+colSeq	:
+	  {
+	    $$ = 0;
+	  }
+	| col colSeq
+	  {
+	    $$ = linkTokensT( $1, $2 );
+	  }
+	;
+
+rowName	: L_DOTTEDNAME
+	| rowName EQUALSSIGN L_DOTTEDNAME
+	  {
+	    $$ = linkTokensT( $3, $1 );
+	    freeToken( $2 );
+	  }
+	;
+
+row	: K_ROW COLON LEFTBRACE colSeq RIGHTBRACE
+	  {
+	    $$ = linkTokensB( renameToken( $1, OP_ROW ), $4 );
+	    freeToken( $2 );
+	    freeToken( $3 );
+	    freeToken( $5 );
+	  }
+	| K_ROW rowName COLON LEFTBRACE colSeq RIGHTBRACE
+	  {
+	    $$ = linkTokensAB( renameToken( $1, OP_ROW ), $2, $5 );
+	    freeToken( $3 );
+	    freeToken( $4 );
+	    freeToken( $6 );
+	  }
+	;
+
+rowSeq	: row
+	| row rowSeq
+	  {
+	    $$ = linkTokensT( $1, $2 );
+	  }
+	;
+
+config	: rowSeq
+	  {
+	    parseTokenTree = $1;
+	  }
+	;
+
+%%
+
+yyerror()
+{
+    markError(
+        tokenize_sourceLineNum,
+        tokenize_sourceColumnNum,
+        "Improper form; unable to continue reading beyond here."
+    );
+}
+

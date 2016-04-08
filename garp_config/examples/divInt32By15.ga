@@ -1,0 +1,82 @@
+
+-------------------------------------------------------------------------------
+row .a=.sign_1:  --0
+{
+
+ 4-19:	D(Dreg),Vout(D,long);
+19:	Hout(D);
+10:	A(col19,hi),function(A),bufferZ,Hout(Z);
+20:	A(col19,hi),function(A),bufferZ,Hout(Z),Vout(Z,long);
+
+}
+
+-------------------------------------------------------------------------------
+row .sign_2:  --1
+{
+
+20:	D(.sign_1),bufferD,Vout(D,long);
+
+ 3:	shiftzeroin,A(01);
+ 4-19:	D(.a),bufferD,A(Dreg);
+ 3-10:	C(abovecol10);
+11-19:	C(abovecol20);
+ 3:	U(A^C),V(A);
+ 4-19:	U(A^C),V(A^C),result(U^K),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+row .sign_3:  --2
+{
+
+20:	D(.sign_2),bufferD,Vout(D,long);
+
+ 0:	shiftzeroin;
+ 0-15:	C(aboveleft4);
+ 2-17:	B(aboveleft2);
+ 4-19:	A(above);
+ 0-20:	add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+row .partial2:  --3
+{
+
+ 0:	shiftzeroin;
+ 0-14:	B(aboveleft6);
+ 0-20:	A(above),U(A^B),V(A),result(U^K),bufferZ,Vout(Z);
+
+ 0-14:	D(aboveleft6),bufferD,Hout(D);
+
+}
+
+-------------------------------------------------------------------------------
+row:  --4
+{
+
+ 0:	shiftzeroin;
+ 4:	C(01);
+ 0-8:	B(aboveleft6);
+ 0-20:	A(.partial2),add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+20:	D(.sign_3),bufferD,Gout(D,global0);
+
+}
+
+-------------------------------------------------------------------------------
+--Shift previous row right by 4 bits, discarding shifted-off bits.
+row:  --5
+{
+
+ 4-18:	A(aboveleft2);
+
+ 3:	shiftzeroin;
+ 3-19:	D(aboveglobal0),bufferD,C(Dreg);
+ 3:	U(C^C),V(C);
+ 4-19:	add3,U(sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+

@@ -1,0 +1,125 @@
+
+-------------------------------------------------------------------------------
+Logic blocks
+
+
+A(00)
+A(01)
+A(10)
+A(11)
+A(Zreg)
+A(Dreg)
+A(aboveglobal0..3)
+A(aboveleft1..8)
+A(above)
+A(aboveright1..8)
+A(abovecol0..23)
+A(global0..3)
+A(left1..8)
+A(right1..8)
+A(col0..23)
+A(self)
+A(row0..23)
+
+D(00)
+D(10)
+D(Zreg)
+D(Dreg)
+D(aboveglobal0..3)
+D(aboveleft1..8)
+D(above)
+D(aboveright1..8)
+D(abovecol0..23)
+D(global0..3)
+D(left1..8)
+D(right1..8)
+D(col0..23)
+D(self)
+D(row0..1023)
+
+A(lo)
+A(hi)
+A(swap)
+
+A(~)
+A(shift1)
+A(~shift1)
+
+function(___)				A B C D
+function(___)				A B C aboveH
+functionhi(___),functionlo(___)		A B C
+table(__,__,__,__,__,__,__,__)		00,01,10,11
+select
+partialselect
+variableshift
+U(___),V(___),result(__)		A B C		V,Kout,U^K,~(U^K)
+add3,U(___),V(___),result(__)		sum carry	V,Kout,U^K,~(U^K)
+
+shiftzeroin
+
+bufferZ
+
+bufferD
+
+Hout(Z)
+Hout(D)
+
+Gout(Z,global0..3)
+Gout(D,global0..3)
+
+Vout(Z)
+Vout(Z,long)
+Vout(D)
+Vout(D,long)
+
+
+-------------------------------------------------------------------------------
+Control blocks
+
+
+A(00)
+A(01)
+A(10)
+A(11)
+A(0)
+A(1)
+A(aboveglobal0..3)
+A(above)
+A(aboveright1..8)
+A(abovecol0..23)
+A(global0..3)
+A(right1..8)
+A(col0..23)
+A(self)
+
+A(lo)
+A(hi)
+A(either)
+
+processor
+
+match(0..63)
+
+memory
+
+queue(0..2),latency(1..8)
+demand(__*1),latency(1..8)		8,16,32
+demand(__*2),latency(1..8)		8,16,32
+demand(__*4),latency(1..8)		8,16,32
+
+demand(allocate)
+demand(noallocate)
+
+demand(aligned)
+demand(nonaligned)
+
+regbus(Zreg,__,bus0..3)			8,16,32
+regbus(Dreg,__,bus0..3)			8,16,32
+
+Gout(global0..3)
+
+Hleft
+Hcenter
+Hright
+
+

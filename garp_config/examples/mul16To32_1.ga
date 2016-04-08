@@ -1,0 +1,194 @@
+
+-------------------------------------------------------------------------------
+--0
+row .a:
+{
+
+--Input .a.
+ 4-11:	D(Zreg),Vout(D,long);
+
+}
+
+-------------------------------------------------------------------------------
+--1
+row .b:
+{
+
+--Input .b.
+ 4-11:	D(Zreg),Vout(D,long);
+
+}
+
+-------------------------------------------------------------------------------
+--2
+row .aSplit:
+{
+
+--Delayed .a.
+ 4-11:	D(.a),Hout(D);
+ 3-10:	A(left1),function(A),bufferZ,Vout(Z,long);
+12-19:	A(right8),function(A),bufferZ,Vout(Z,long);
+
+}
+
+-------------------------------------------------------------------------------
+--3
+row .tripleA:
+{
+
+--Triple multiplicand .a.
+ 3:	shiftzeroin;
+ 3-10:	B(.aSplit,shift1);
+11:	B(shift1);
+ 3-11:	A(.aSplit),
+	 add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z),Vout(Z,long);
+
+--Triple multiplicand .a (again, for layout).
+12:	shiftzeroin;
+12-19:	B(.aSplit,shift1);
+20:	B(shift1);
+12-20:	A(.aSplit),
+	 add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z),Vout(Z,long);
+
+--Bits 4..5 and 10..11 of .b.
+ 6:	D(.b),bufferD,Gout(D,global0);
+ 9:	D(.b),bufferD,Gout(D,global1);
+
+}
+
+-------------------------------------------------------------------------------
+--4
+row .partials2And5:
+{
+
+--Rerouted .aSplit.
+3-10,12-19:
+	D(.aSplit),bufferD,Hout(D);
+
+--Perform partial product selection for bits 4..5 of .b.
+ 2- 9:	B(left1,shift1);
+10:	B(shift1);
+ 2-10:	A(aboveleft1),C(aboveglobal0,~),partialselect,bufferZ,Vout(Z);
+
+--Perform partial product selection for bits 10..11 of .b.
+13-20:	B(right1,shift1);
+21:	B(shift1);
+13-21:	A(aboveright1),C(aboveglobal1,~),partialselect,bufferZ,Vout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+--5
+row .partials3And4:
+{
+
+--Bits 6..7 and 8..9 of .b.
+ 7:	D(.b),bufferD,Gout(D,global0);
+ 8:	D(.b),bufferD,Gout(D,global1);
+
+--Perform partial product selection for bits 6..7 of .b.
+ 3-10:	B(.aDelayed,shift1);
+11:	B(shift1);
+ 3-11:	A(.tripleA),C(global0,~),partialselect,bufferZ,Vout(Z);
+
+--Perform partial product selection for bits 8..9 of .b.
+12-19:	B(.aDelayed,shift1);
+20:	B(shift1);
+12-20:	A(.tripleA),C(global1,~),partialselect,bufferZ,Vout(Z);
+
+--Bits 2..3 and 12..13 of .b.
+ 5:	D(.b),bufferD,Gout(D,global2);
+10:	D(.b),bufferD,Gout(D,global3);
+
+}
+
+-------------------------------------------------------------------------------
+--6
+row .aDelayed=.partials1And6:
+{
+
+--Delay .aSplit to match .tripleA.
+3-10,12-19:
+	D(.aSplit),bufferD,Vout(D,long);
+
+--Perform partial product selection for bits 2..3 of .b.
+ 3-10:	B(.aDelayed,shift1);
+11:	B(shift1);
+ 3-11:	A(.tripleA),C(aboveglobal2,~),partialselect,bufferZ,Hout(Z);
+
+--Perform partial product selection for bits 12..13 of .b.
+12-19:	B(.aDelayed,shift1);
+20:	B(shift1);
+12-20:	A(.tripleA),C(aboveglobal3,~),partialselect,bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+--7
+row .sums1Thru3And4Thru6:
+{
+
+--Add partial products for bits 2..7 of .b.
+ 1:	shiftzeroin;
+ 1- 9:	A(aboveleft2);
+ 2-10:	B(.partials2And5);
+ 3-11:	C(.partials3And4);
+ 1-11:	add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+--Add partial products for bits 8..13 of .b.
+12:	shiftzeroin;
+12-20:	A(.partials3And4);
+13-21:	B(.partials2And5);
+14-22:	C(aboveright2);
+12-22:	add3,U(carry^sum),V(sum),result(U^K),bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+--8
+row .z:
+{
+
+--Add three partials sums.
+ 4:	shiftzeroin;
+ 4-19:	A(.sum0And7);
+ 5-15:	B(aboveright4);
+ 8-18:	C(aboveleft4);
+ 4-19:	add3,U(carry^sum),V(sum),result(U^K),bufferZ;
+
+}
+
+-------------------------------------------------------------------------------
+--9
+row .partials0And7:
+{
+
+--Bits 0..1 and 14..15 of .b.
+ 4:	D(.b),bufferD,Gout(D,global0);
+11:	D(.b),bufferD,Gout(D,global1);
+
+--Perform partial product selection for bits 0..1 of .b.
+ 3-10:	B(.aDelayed,shift1);
+11:	B(shift1);
+ 3-11:	A(.tripleA),C(global0,~),partialselect,bufferZ,Hout(Z);
+
+--Perform partial product selection for bits 14..15 of .b.
+12-19:	B(.aDelayed,shift1);
+20:	B(shift1);
+12-20:	A(.tripleA),C(global1,~),partialselect,bufferZ,Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+--10
+row .sum0And7:
+{
+
+--Add partial products for bits 0..1 and 14..15 of .b.
+ 4-10:	A(aboveright1),function(A),bufferZ,Vout(Z);
+11:	shiftzeroin;
+11-12:	A(aboveright1);
+11-19:	B(aboveleft1),U(A^B),V(B),result(U^K),bufferZ,Vout(Z);
+
+}
+

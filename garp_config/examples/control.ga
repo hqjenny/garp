@@ -1,0 +1,28 @@
+
+-------------------------------------------------------------------------------
+row :
+{
+
+control: processor,A(1),B(right4,either),
+	match(11),regbus(Dreg,size32,bus1),Gout(global0);
+control: Hleft;
+
+}
+
+-------------------------------------------------------------------------------
+row :
+{
+
+control: memory,A(1),B(right4),C(right4),D(1),queue1,regbus(Dreg,size16,bus3);
+
+}
+
+
+-------------------------------------------------------------------------------
+row :
+{
+
+control: memory,A(1),B(right4,hi),D(0),demand(size16*4,noallocate),latency(4);
+
+}
+

@@ -1,0 +1,3 @@
+
+int addCharVector( int );
+

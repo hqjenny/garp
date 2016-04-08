@@ -1,0 +1,510 @@
+row 0:
+  col 0:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 1:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 2:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 3:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 4:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 5:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 6:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 7:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 8:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 9:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 10:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 11:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 12:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 13:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 14:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 15:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 16:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 17:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 18:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 19:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 20:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 21:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 22:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_DREG 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 0
+    HOut: SELECT_D
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+
+row 1:
+  col 0:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 8 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 1:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 9 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 2:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 10 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 3:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 11 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 4:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 12 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 5:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 13 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 6:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 14 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 7:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 15 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 8:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 16 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 9:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 17 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 10:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 18 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 11:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 19 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 12:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 20 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 13:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 21 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 14:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_ABOVEHCOL 22 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 15:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 16:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 17:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 18:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 19:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 20:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 21:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+  col 22:
+    A: IN_CONSTANT 0 PERTURB_00
+    B: IN_CONSTANT 0 PERTURB_00
+    C: IN_CONSTANT 0 PERTURB_00
+    D: IN_CONSTANT 0 PERTURB_00
+    function: MODE_DIRECT 0000
+    bufferZ: 0 bufferD: 1
+    HOut: SELECT_Z
+    GOut: SELECT_Z 7
+    VOut: SELECT_Z
+
+

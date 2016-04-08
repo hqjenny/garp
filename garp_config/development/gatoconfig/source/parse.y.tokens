@@ -1,0 +1,46 @@
+
+%token SLASH
+%token VERTICALBAR
+%token BACKSLASH
+%token LEFTPARENTHESIS
+%token RIGHTPARENTHESIS
+%token LEFTBRACKET
+%token RIGHTBRACKET
+%token LEFTBRACE
+%token RIGHTBRACE
+
+%token PLUSSIGN
+%token MINUSSIGN
+%token CARET
+%token LESSTHANSIGN
+%token EQUALSSIGN
+%token EQUALSSIGN_EQUALSSIGN
+%token GREATERTHANSIGN
+%token TILDE
+
+%token RIGHTQUOTATIONMARK
+%token COMMA
+%token SEMICOLON
+%token COLON
+%token PERIOD
+%token EXCLAMATIONPOINT
+%token QUESTIONMARK
+
+%token NUMBERSIGN
+%token STAR
+
+%token DOLLARSIGN
+%token ATSIGN
+%token AMPERSAND
+
+%token PERCENTSIGN
+
+%token K_ROW
+
+%token L_BINARY
+%token L_NUMBER
+%token L_NAME
+%token L_DOTTEDNAME
+
+%token UNKNOWN
+

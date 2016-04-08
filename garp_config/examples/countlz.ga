@@ -1,0 +1,101 @@
+
+-------------------------------------------------------------------------------
+row:
+{
+
+-- For each of the 4 bytes in the word, determine whether that byte is all
+-- zero.  Distribute the results of these tests over the global wires.
+4,8,12,16:
+	shiftzeroin;
+ 4-19:	A(Dreg),U(~A),V(A);
+7,11,15,19:
+	result(Kout),bufferZ;
+ 7:	Gout(Z,global0);
+11:	Gout(Z,global1);
+15:	Gout(Z,global2);
+19:	Gout(Z,global3);
+
+-- Drive the input value onto the horizontal wires below.
+ 4-19:	D(Dreg),Hout(D);
+
+}
+
+-------------------------------------------------------------------------------
+row:
+{
+
+-- Determine which byte holds the leading 1 bit.  The result here is used to
+-- control the select function on the next row.
+{*** GATOCONFIG TABLE WORKS BACKWORD FROM WAY IT SHOULD! ***}
+ 1:	C(aboveglobal3,hi),B(aboveglobal2,hi),A(aboveglobal1,hi),
+	 table(10,11,00,00,01,01,01,01),bufferZ,Gout(Z,global3);
+
+-- Determine if the input word is entirely zero.
+ 2:	A(aboveglobal3,hi),B(aboveglobal2,hi),C(aboveglobal1,hi),
+	 D(aboveglobal0,hi),function(~A&~B&~C&~D),bufferZ,Hout(Z);
+
+-- Calculate bit 0 of countlz of each byte.
+ 3:	A(abovecol6,lo),B(abovecol5,hi),C(abovecol5,lo),D(abovecol4,hi);
+ 8:	A(abovecol10,lo),B(abovecol9,hi),C(abovecol9,lo),D(abovecol8,hi);
+16:	A(abovecol14,lo),B(abovecol13,hi),C(abovecol13,lo),D(abovecol12,hi);
+18:	A(abovecol18,lo),B(abovecol17,hi),C(abovecol17,lo),D(abovecol16,hi);
+3,8,16,18:
+	function(A|~A&~B&C|~A&~B&~C&~D),Hout(Z);
+ 5:	A(abovecol7,hi),B(abovecol7,lo),C(abovecol6,hi),D(col3);
+ 9:	A(abovecol11,hi),B(abovecol11,lo),C(abovecol10,hi),D(col8);
+13:	A(abovecol15,hi),B(abovecol15,lo),C(abovecol14,hi),D(col16);
+20:	A(abovecol19,hi),B(abovecol19,lo),C(abovecol18,hi),D(col18);
+5,9,13,20:
+	function(~A&B|~A&~B&~C&D),bufferZ;
+
+-- Calculate bit 1 of countlz of each byte.
+ 4:	A(abovecol6,hi),B(abovecol6,lo),C(abovecol5,hi),D(abovecol5,lo);
+12:	A(abovecol10,hi),B(abovecol10,lo),C(abovecol9,hi),D(abovecol9,lo);
+17:	A(abovecol14,hi),B(abovecol14,lo),C(abovecol13,hi),D(abovecol13,lo);
+19:	A(abovecol18,hi),B(abovecol18,lo),C(abovecol17,hi),D(abovecol17,lo);
+4,12,17,19:
+	function(A|B|~A&~B&~C&~D),Hout(Z);
+ 6:	A(abovecol7,hi),B(abovecol7,lo),C(col4);
+10:	A(abovecol11,hi),B(abovecol11,lo),C(col12);
+14:	A(abovecol15,hi),B(abovecol15,lo),C(col17);
+21:	A(abovecol19,hi),B(abovecol19,lo),C(col19);
+6,10,14,21:
+	function(~A&~B&C),bufferZ;
+
+-- Calculate bit 2 of countlz of each byte.
+7:	A(abovecol7,hi),B(abovecol7,lo),C(abovecol6,hi),D(abovecol6,lo);
+11:	A(abovecol11,hi),B(abovecol11,lo),C(abovecol10,hi),D(abovecol10,lo);
+15:	A(abovecol15,hi),B(abovecol15,lo),C(abovecol14,hi),D(abovecol14,lo);
+22:	A(abovecol19,hi),B(abovecol19,lo),C(abovecol18,hi),D(abovecol18,lo);
+7,11,15,22:
+	function(~A&~B&~C&~D),bufferZ;
+
+5-7:	Hout(Z);
+9-11:	Hout(Z);
+13-15:	Hout(Z);
+20:	Gout(Z,global0);
+21:	Gout(Z,global1);
+22:	Gout(Z,global2);
+
+}
+
+-------------------------------------------------------------------------------
+row:
+{
+
+ 9:	B(aboveglobal0);
+10:	B(aboveglobal1);
+11:	B(aboveglobal2);
+9-11:	A(aboveleft4),D(aboveright4),C(aboveglobal3),select,bufferZ;
+ 9:	Gout(Z,global0);
+10:	Gout(Z,global1);
+11:	Gout(Z,global2);
+
+ 4:	A(global1),B(global0),C(abovecol2),
+	 functionhi(A&~C),functionlo(B&~C),bufferZ;
+ 5:	A(aboveglobal3,lo),B(global2),C(abovecol2),
+	 functionhi(~A&~C),functionlo(B&~C),bufferZ;
+ 6:	B(aboveglobal3,hi),C(abovecol2),functionhi(C),functionlo(B&~C),bufferZ;
+
+}
+

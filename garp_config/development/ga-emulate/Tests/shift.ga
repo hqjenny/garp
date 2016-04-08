@@ -1,0 +1,36 @@
+
+-------------------------------------------------------------------------------
+row :  --0
+{
+
+ 4- 5:	D(Dreg);
+ 4:	Gout(D,global0);
+ 5:	Gout(D,global1);
+ 4-19:	A(Zreg),function(A),Hout(Z);
+
+}
+
+-------------------------------------------------------------------------------
+row :  --1
+{
+
+10-19:	A(aboveright6);
+ 8-19:	B(aboveright4);
+ 6-19:	D(aboveright2);
+ 4-19:	C(aboveglobal1,~),select,bufferZ,Hout(Z);
+
+ 3:	A(aboveglobal0,hi),B(aboveglobal0,lo),
+	functionhi(~B),functionlo(~A),bufferZ,Gout(Z,global0);
+
+}
+
+-------------------------------------------------------------------------------
+row :  --2
+{
+
+    4:	shiftzeroin;
+ 5-19:	A(aboveright1,shift1),D(aboveright1);
+ 4-19:	B(above,shift1),C(aboveglobal0),select,bufferZ,Hout(Z);
+
+}
+
