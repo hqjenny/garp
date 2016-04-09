@@ -18,11 +18,19 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     val D_in = Vec.fill(23*R){Bits(INPUT, width=W)}
     val Z_out = Vec.fill(23*R){Bits(OUTPUT, width=W)}
     val D_out = Vec.fill(23*R){Bits(OUTPUT, width=W)}
+    //val D_out = Vec.fill(R){Vec.fill(23){Bits(OUTPUT, width=W)}}
     val test = Bool(INPUT)
 
   }
 
-  //val test = Vec.fill(4){Module(new TestBlockModule(W)).io}
+  //val test = Vec.fill(4){Module(new TestBlockModule()).io}
+  
+  // i is mapped to module's index
+  //val test = Vec.tabulate(4){i => Module(new ArrayRowModule(I=i)).io}
+  val test = Seq.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
+  // Returns a bundle of individual element and its index
+  //for((v,i) <- test.zipwithIndex){
+  //}
 
   //for (i <- 0 until 4){
   //    test(i).in := io.in(i)
@@ -31,45 +39,29 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   //}
 
   // Haven't figure out how to connect them 
-  val V_wire_in = Vec.fill(23*V){Bits(INPUT, width=W)}
-  val G_wire_above =  Vec.fill(G){Bits(INPUT, width=W)}
+  val V_wire_in = Vec.fill(23*V){Bits(width=W)}
 
-
-  val row0 = Module(new ArrayRowModule(W, I=0)).io
-  val row1 = Module(new ArrayRowModule(W, I=1)).io
-  //val row2 = Module(new ArrayRowModule(W, I=2)).io
-
-  row1.G_wire_above := row0.G_wire_below
-  //row2.G_wire_above := row1.G_wire_below
-
-  row1.H_wire_above := row0.H_wire_below
-  //row2.H_wire_above := row1.H_wire_below
-
-  row1.mem_bus_in := row0.mem_bus_out
-  //row2.mem_bus_in := row1.mem_bus_out
-
-  row1.H_out_above := row0.H_out
-  //row2.H_out_above := row1.H_out
-  
-  for (i <- 0 until 24){
-    row0.config(i) := io.config(0+i)    
-    row1.config(i) := io.config(24+i)   
-    //row2.config(i) := io.config(48+i)   
+  val rows = test.map(x => x.io)
+  for(i <- 1 until R){
+    rows(i).G_wire_above := rows(i-1).G_wire_below
+    rows(i).H_wire_above := rows(i-1).H_wire_below
+    rows(i).mem_bus_in := rows(i-1).mem_bus_in
+    rows(i).H_out_above := rows(i-1).H_out
   }
-
-  for (i <- 0 until 23){
-    row0.Z_in(i) := io.Z_in(0+i)
-    row0.D_in(i) := io.D_in(0+i)
-    row1.Z_in(i) := io.Z_in(23+i)
-    row1.D_in(i) := io.D_in(23+i)
   
-    io.Z_out(i) := row0.Z_out(i)
-    io.D_out(i) := row0.D_out(i)
-    io.Z_out(23+i) := row1.Z_out(i)
-    io.D_out(23+i) := row1.D_out(i)
+  for(i <- 0 until R){
+    for (j <- 0 until 24){
+      rows(i).config(j) := io.config(24 * i + j)
+    }
+
+    for (j <- 0 until 23){
+      rows(i).Z_in(j) := io.Z_in(23 * i + j)
+      rows(i).D_in(j) := io.D_in(23 * i + j)
+      io.Z_out(23 * i + j) := rows(i).Z_out(j)
+      io.D_out(23 * i + j) := rows(i).D_out(j)
+    }
   }
-    
-  //row0.config := io.config(23,0)    
+      
   /*val io = new Bundle { 
     // 16 2-bit input
     val V_wire_in = Vec.fill(V){Bits(INPUT, width=W)}
@@ -263,6 +255,9 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   //poke(c.io.in(0), 1)
   //poke(c.io.H_out_above, 1)
 
+  println("%s", sys.env("HOME"))
+  println("%s", sys.env("GARP"))
+  val garp_path = sys.env("GARP")
   val source = scala.io.Source.fromFile("src/main/config/test.config")
   val lines = try source.mkString finally source.close()
   val list = lines.split('\n').flatMap(x => x.split(',').map(x => x.trim))
@@ -314,7 +309,7 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
     printf("%x\t", D);
   }
   //printf("Hwire %x\n", c.row0.H_wire_below(0).toUInt())
-  val H_wire_below = peek(c.row0.H_wire_below).reverse
+  /*val H_wire_below = peek(c.row0.H_wire_below).reverse
   for(i <- 0 until 33){
     printf("%x\t", H_wire_below(i))
   }
@@ -322,7 +317,7 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   val H_wire_above = peek(c.row1.H_wire_above).reverse
   for(i <- 0 until 33){
     printf("%x\t", H_wire_above(i))
-  }
+  }*/
 
 }
 

@@ -69,6 +69,7 @@ run-vlsi-par-report: $(src_files) vlsi
 	sbt "run-main garp.GarpAccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-gl-par --testCommand \"build/vlsi/vcs-sim-gl-par/$(MODULE) -ucli -do build/vlsi/vcs-sim-gl-par/+run_from_prjdir.tcl\"" > build/vlsi/vcs-par-report
 
 run-vlsi: $(src_files) vlsi
+	export GARP=../garp_config
 	cd build/vlsi/vcs-sim-rtl&& make CONFIG=$(CONFIG)
 	cd ../../..
 	sbt "run-main garp.GarpAccelMain $(PROJ) $(MODULE) $(CONFIG) --test --backend null --configInstance $(PROJ).$(CONFIG) --targetDir build/vlsi/vcs-sim-rtl --testCommand \"build/vlsi/vcs-sim-rtl/$(MODULE)\""
