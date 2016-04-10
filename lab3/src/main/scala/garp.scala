@@ -25,18 +25,8 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   //val test = Vec.fill(4){Module(new TestBlockModule()).io}
   
   // i is mapped to module's index
-  //val test = Vec.tabulate(4){i => Module(new ArrayRowModule(I=i)).io}
   val test = Seq.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
-  // Returns a bundle of individual element and its index
-  //for((v,i) <- test.zipwithIndex){
-  //}
-
-  //for (i <- 0 until 4){
-  //    test(i).in := io.in(i)
-  //    test(i).sel := io.sel(i)
-  //    io.out(i) := test(i).out 
-  //}
-
+  
   // Haven't figure out how to connect them 
   val V_wire_in = Vec.fill(23*V){Bits(width=W)}
 
@@ -126,14 +116,12 @@ object read_config {
   }
 }
 
-
-
-
-
 class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
   //val garp_path = sys.env("GARP")
+  //***********************************************************//
   // TEST 0: add
+  //***********************************************************//
   val test = "add"
 
   // Read in  the configuration
@@ -145,20 +133,18 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
   // Generate positive random number
   val rand = scala.util.Random
-  val Z = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
-  val D = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
+  //val Z = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
+  //val D = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
+  val Z = BigInt(0x11111111)
+  val D = BigInt(0x11111111)
 
   // Initialize array of simluation input  
   var Z_in = Array.fill(c.R*23){BigInt(0)}
   var D_in = Array.fill(c.R*23){BigInt(0)}
   //for(i <- 4  until 20){
   for(i <- 0 until 23){
-    Z_in(i) = range(Z, i+1, i) 
-    D_in(i) = range(D, i+1, i)
-  }
-  for(i <- 0 until 23){
-    Z_in(i) = BigInt(0)
-    D_in(i) = BigInt(2)
+    Z_in(i) = range(Z, 2*i+1, 2*i) 
+    D_in(i) = range(D, 2*i+1, 2*i)
   }
 
   // Generate input for emulator
@@ -167,7 +153,7 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   val input = "src/main/input/"+test+".in"
   val output = "src/main/output/"+test+".out"
   val writer = new java.io.PrintWriter(new java.io.File(input))
-  writer.write("lc "+test+".config\n")
+  writer.write("lc ../garp_config/examples/" + test + ".config\n")
   // Print Z to the input
   writer.write("sz 0 " + "%x".format(Z) + "\n")
   writer.write("sd 0 " + "%x".format(D) + "\n")
@@ -177,16 +163,19 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
   println("Finished writing!")
   //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  println(input)
   val emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
-  println(emulator_out)
+  //println(emulator_out)
   val detele = "Configuration of \\d+ rows loaded.\n".r
   val data=detele.replaceAllIn(emulator_out, "")
-  val re = """(\d+): Z:(\d+) D:(\d+) H:(\d+) V:(\d+) G:(\d+) C:...""".r
+  //val re = """(\d+): Z:(\d+) D:(\d+) H:(\d+) V:(\d+) G:(\d+) C:...""".r
+  val re = """(\S+):\s+Z\:(\S+)\s+D:(\S+)\s+H:(\S+)\s+V:(\S+)\s+G:(\S+)\s+""".r
 
   // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
   val golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  //println(golden_result)
   val D_ref = new BigInt(new BigInteger( golden_result(1)(2), 16))
-  printf("%x\n", D_ref)
+  printf("D_ref%x\n", D_ref)
   
   poke(c.io.Z_in, Z_in)
   poke(c.io.D_in, D_in)
