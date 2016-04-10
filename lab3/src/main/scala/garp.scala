@@ -1,7 +1,7 @@
 package garp
-
 import Chisel._
 import Array._
+import sys.process._ 
 import java.math.BigInteger
 
 
@@ -18,7 +18,6 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     val D_in = Vec.fill(23*R){Bits(INPUT, width=W)}
     val Z_out = Vec.fill(23*R){Bits(OUTPUT, width=W)}
     val D_out = Vec.fill(23*R){Bits(OUTPUT, width=W)}
-    //val D_out = Vec.fill(R){Vec.fill(23){Bits(OUTPUT, width=W)}}
     val test = Bool(INPUT)
 
   }
@@ -105,160 +104,11 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   io <> LB.io*/ 
 }
 
-/*
-class DefaultConfig() extends Config {
-    override val topDefinitions:World.TopDefs = {
-          (pname,site,here) => pname match {
-                  case WidthP => 64
-                      case Stages => Knob("stages")
-          }
-      }
-                                override val topConstraints:List[ViewSym=>Ex[Boolean]] = List(
-                                      ex => ex(WidthP) === 64,
-                                          ex => ex(Stages) >= 1 && ex(Stages) <= 4 && (ex(Stages)%2 === 0 || ex(Stages) === 1)
-                                            )
-                                            override val knobValues:Any=>Any = {
-                                                  case "stages" => 1
-                                                    }
-                                                  }*/
 
-object range {
-  def apply(field:BigInt, end:Int, start:Int) : BigInt = {
-
-    val clear_high = (BigInt(1) << (end+1)) - 1
-    val clear_low = (BigInt(1) << start) - 1
-
-    val mask = clear_high & ~clear_low
-    return (field & mask) >> start
-  }
-}
-
-object print_mode { 
-  def apply(mode:BigInt, mx: BigInt) : Unit = {
-    if(mode == BigInt(0)){ printf("Table Mode\n")}
-    else if (mode == BigInt(1)) { printf("Split Table Mode\n")}
-    else if (mode == BigInt(2)) { if(mx == BigInt(1)){printf("Partial ")} 
-                                  printf("Select Mode(suppress shifts in)\n")}
-    else if (mode == BigInt(3)) { if(mx == BigInt(1)){printf("Partial ")} 
-                                  printf("Select Mode(not suppress shifts in)\n")}
-    else if (mode == BigInt(4)) { printf("Carry Chain Mode(suppress carry in)\n")}
-    else if (mode == BigInt(5)) { printf("Carry Chain Mode(not suppress carry in)\n")}
-    else if (mode == BigInt(6)) { printf("Triple Add Mode(suppress shifts, carry in)\n")}
-    else if (mode == BigInt(7)) { printf("Triple Add Mode(not suppress shifts,carry in)\n")}
-  }
-}
-
-
-object print_input { 
-  def apply(X_in: BigInt, X_prime: BigInt, i: Int) : Unit = {
-
-    printf("%c_in:", i + 65)
-    if(range(X_in, 5,2) == BigInt(0)){
-      if(range(X_in, 1,0) == BigInt(0))     { printf("00\t")}
-      else if(range(X_in, 1,0) == BigInt(1)){ printf("10\t")}
-      else if(range(X_in, 1,0) == BigInt(2)){ printf("Z_reg\t")}
-      else                                  { printf("D_reg\t")}
-    }else{
-      // Wire index is reverse order
-      if(range(X_in, 5,4) == BigInt(1)){
-        printf("V wire pair %d\t", BigInt(15) - range(X_in,3,0))
-      }
-      else if(range(X_in, 5, 5) == BigInt(1)){
-        // G wires 
-        if(range(X_in, 3,2) == BigInt(3)){
-          printf("G wire pair %d", BigInt(3) - range(X_in,1,0))
-        }else{
-          printf("H wire pair %d from right", BigInt(10) - range(X_in,3,0))
-        }
-        if (range(X_in, 4, 4) == BigInt(1)){printf(" below\t")}
-        if (range(X_in, 4, 4) == BigInt(0)){printf(" above\t")}
-      }
-    }
-
-    if(X_prime == BigInt(0)) { printf("X0X0\t")}
-    if(X_prime == BigInt(1)) { printf("X0X1\t")}
-    if(X_prime == BigInt(2)) { printf("X1X0\t")}
-    if(X_prime == BigInt(3)) { printf("X1X1\t")}
-  } 
-}
-
-
-object combine_array {
-  def apply(c:Array[BigInt], s:Int) : BigInt = {
-    var a = BigInt(0)
-    for(i <- (0 to (s -1)).reverse){
-      //val index = s - 1 - i
-      //printf("%x ", a)
-      a = (c(i) << (i << 1)) | a 
-    }
-    return a
-  }
-}
-
-object print_config {
-  def apply(c:BigInt) : Unit = {
-    val A_in = range(c, 63, 58)
-    val B_in = range(c, 55, 50)
-    val C_in = range(c, 47, 42)
-    val D_in = range(c, 39, 34)
-    val A_prime = range(c, 57, 56)
-    val B_prime = range(c, 49, 48)
-    val C_prime = range(c, 41, 40)
-    val D_prime = range(c, 33, 32)
-    val mx = range(c, 33, 32)
-    val lut = range(c, 31, 16)
-    val mode = range(c, 15, 13)
-    val Z = range(c, 12, 12)
-    val D = range(c, 11, 11)
-    val H = range(c, 10, 10)
-    val G = range(c, 9, 9)
-    val V = range(c, 8, 8)
-    val Gout = range(c, 7, 5)
-    val Vout = range(c, 4, 0)
-
-    print_mode(mode, mx)
-
-    print_input(A_in, A_prime, 0)
-    print_input(B_in, B_prime, 1)
-    print_input(C_in, C_prime, 2)
-    print_input(D_in, D_prime, 3)
-
-    if (Z == BigInt(0)) { printf("Z:not latching\t")}
-    else                { printf("Z:latching\t")}
-    if (D == BigInt(0)) { printf("D:not latching\t")}
-    else                { printf("D:latching\t")}
-    if (H == BigInt(0)) { printf("Hout:Z\t")}
-    else                { printf("Hout:D\t")}
-    if (G == BigInt(0)) { printf("Gout:Z\t")}
-    else                { printf("Gout:D\t")}
-    if (V == BigInt(0)) { printf("Vout:Z\t")}
-    else                { printf("Vout:D\t")}
-
-    if (range(Gout, 2, 2) == BigInt(1)){
-      printf("Gout: 0x%x\t", range(Gout, 1, 0))
-    }else{
-      printf("Gout: no output\t")
-    }
-    if (range(Vout, 4, 4) == BigInt(1)){
-      printf("Vout: 0x%x\t", range(Vout, 3, 0))
-    }else{
-      printf("Vout: no output\t")
-    }
-    println("")
-  }
-}
-
-
-
-class GarpAccelTests(c: GarpAccel) extends Tester(c) {
-
-  //poke(c.io.in(0), 1)
-  //poke(c.io.H_out_above, 1)
-
-  println("%s", sys.env("HOME"))
-  println("%s", sys.env("GARP"))
-  val garp_path = sys.env("GARP")
-  val source = scala.io.Source.fromFile("src/main/config/test.config")
+object read_config {
+  def apply(test:String) : Array[BigInt] = {
+   // Read in .config
+  val source = scala.io.Source.fromFile("../garp_config/examples/" + test + ".config")
   val lines = try source.mkString finally source.close()
   val list = lines.split('\n').flatMap(x => x.split(',').map(x => x.trim))
   val list_strip = list.slice(2, list.length-1).map(x => x.replaceFirst("0x",""))
@@ -272,22 +122,79 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   for(i <- 0 until config.length){
     printf("%x ", config(i))
   }
-  // Print all config
-  config.map(x => print_config(x))
+  return config
+  }
+}
 
+
+
+
+
+class GarpAccelTests(c: GarpAccel) extends Tester(c) {
+
+  //val garp_path = sys.env("GARP")
+  // TEST 0: add
+  val test = "add"
+
+  // Read in  the configuration
+  val config = read_config(test)
+
+   // Print all config
+  config.map(x => print_config(x))
+ 
+
+  // Generate positive random number
+  val rand = scala.util.Random
+  val Z = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
+  val D = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
+
+  // Initialize array of simluation input  
   var Z_in = Array.fill(c.R*23){BigInt(0)}
   var D_in = Array.fill(c.R*23){BigInt(0)}
   //for(i <- 4  until 20){
   for(i <- 0 until 23){
-    Z_in(i) = BigInt(2)
-    D_in(i) = BigInt(1)
+    Z_in(i) = range(Z, i+1, i) 
+    D_in(i) = range(D, i+1, i)
+  }
+  for(i <- 0 until 23){
+    Z_in(i) = BigInt(0)
+    D_in(i) = BigInt(2)
   }
 
+  // Generate input for emulator
+  "mkdir -p src/main/input".!
+  "mkdir -p src/main/output".!
+  val input = "src/main/input/"+test+".in"
+  val output = "src/main/output/"+test+".out"
+  val writer = new java.io.PrintWriter(new java.io.File(input))
+  writer.write("lc "+test+".config\n")
+  // Print Z to the input
+  writer.write("sz 0 " + "%x".format(Z) + "\n")
+  writer.write("sd 0 " + "%x".format(D) + "\n")
+  writer.write("step\n")
+  writer.write("qa\n")
+  writer.close()
+
+  println("Finished writing!")
+  //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  val emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
+  println(emulator_out)
+  val detele = "Configuration of \\d+ rows loaded.\n".r
+  val data=detele.replaceAllIn(emulator_out, "")
+  val re = """(\d+): Z:(\d+) D:(\d+) H:(\d+) V:(\d+) G:(\d+) C:...""".r
+
+  // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
+  val golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  val D_ref = new BigInt(new BigInteger( golden_result(1)(2), 16))
+  printf("%x\n", D_ref)
+  
   poke(c.io.Z_in, Z_in)
   poke(c.io.D_in, D_in)
   poke(c.io.test, 1)
+
   step(1)
   poke(c.io.config, config)
+  poke(c.io.test, 0)
 
   step(1)
   //peek(c.io.config)
@@ -299,25 +206,28 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   //  printf("Z_out %d %x\t", i , Z_out_array(i))
   //}
   
+  var Z_out = new Array[BigInt](0)
+  var D_out = new Array[BigInt](0)
+
   for (i <- 0 until c.R){
     printf("Z_out(%d) ", i)
-    val Z = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
-    printf("%x\t", Z);
+    //val Z_out = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    Z_out = Z_out :+ combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23) 
+    printf("%x\t", Z_out(i));
 
     printf("D_out(%d) ", i)
-    val D = combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
-    printf("%x\t", D);
-  }
-  //printf("Hwire %x\n", c.row0.H_wire_below(0).toUInt())
-  /*val H_wire_below = peek(c.row0.H_wire_below).reverse
-  for(i <- 0 until 33){
-    printf("%x\t", H_wire_below(i))
-  }
+    D_out = D_out :+ combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D_out(i));
 
-  val H_wire_above = peek(c.row1.H_wire_above).reverse
-  for(i <- 0 until 33){
-    printf("%x\t", H_wire_above(i))
-  }*/
+    val H_wire_below = peek(c.rows(i).H_wire_below).reverse
+    val H_wire_above = peek(c.rows(i).H_wire_above).reverse
+
+    for(j <- 0 until 33){
+      printf("%x\t", H_wire_below(j))
+      printf("%x\t", H_wire_above(j))
+    }
+  }
+  assert (D_out(1) == D_ref)
 
 }
 
