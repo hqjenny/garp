@@ -50,7 +50,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     val mem_bus_out = Vec.fill(23){Bits(OUTPUT, width=W)}
   }
 
-  printf("index%d\n", UInt(I));
+  //printf("index%d\n", UInt(I));
   // 1 Control Blocks per row
   val CB = Module(new ControlBlockModule()).io
   // 23 Logic Blocks per row
@@ -102,7 +102,9 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     LB(i).mem_bus_in := io.mem_bus_in(i)
     io.mem_bus_out(i) := LB(i).mem_bus_out
   }
-
+  LB(0).shift_X_in := Bits(0)
+  LB(0).shift_carry_in := Bits(0)
+  LB(0).carry_in := Bits(0)
   // shift_X, shift_carry, carry
   for (i <- 1 until 23) {
     LB(i).shift_X_in := LB(i-1).shift_X_out
@@ -126,8 +128,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     io.D_out(i) := LB(i).D_out
   }
 
-
-  for (i <- 1 until 23) {
+  for (i <- 0 until 23) {
     LB(i).mem_D_or_Z := CB.mem_D_or_Z
     LB(i).store_en := CB.store_transfer_access
   }

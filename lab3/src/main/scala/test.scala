@@ -129,5 +129,27 @@ object print_config {
   }
 }
 
+object read_config {
+  def apply(test:String, size:Int) : Array[BigInt] = {
+   // Read in .config
+  val source = scala.io.Source.fromFile("../garp_config/examples/" + test + ".config")
+  val lines = try source.mkString finally source.close()
+  val list = lines.split('\n').flatMap(x => x.split(',').map(x => x.trim))
+  val list_strip = list.slice(2, list.length-1).map(x => x.replaceFirst("0x",""))
+  var config = new Array[BigInt](0)  
+  for(i <- 0 until list_strip.length){
+    if(i%2 != 0){
+      config = config :+ new BigInt(new BigInteger( list_strip(i-1)+list_strip(i), 16))
+    }
+  }
+  // Pad the empty config with 0, otherwise the index for config will be wrong
+  config = config ++ Array.fill(size * 24 - config.length){BigInt(0)}
+  //println(list_strip)
+  for(i <- 0 until config.length){
+    printf("%x ", config(i))
+  }
+  return config
+  }
+}
 
 
