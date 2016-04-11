@@ -146,8 +146,8 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   config.map(x => print_config(x))
 
   // Generate positive random number
-  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
-  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
   //val Z = BigInt(0x11111111)
   //val D = BigInt(0x11111111)
 
@@ -228,6 +228,8 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
   printf("PASS TEST0\n")
   step(1)
+  poke(c.io.config, reset_config(c.R))
+  step(1)
 
   //***********************************************************//
   // TEST 1: add3 : Z0 + Z1 + D1 = D2
@@ -240,9 +242,9 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   config.map(x => print_config(x))
 
   // Generate positive random number
-  Z1 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
-  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
-  D1 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
+  Z1 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D1 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
   //val Z = BigInt(0x11111111)
   //val D = BigInt(0x11111111)
 
@@ -295,6 +297,7 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   poke(c.io.config, config)
   poke(c.io.test, 0)
   step(1)
+  step(1)
   //peek(c.io.config)
   // ATTENTION: peed returns an array with reverse indexing 
   Z_out_array = peek(c.io.Z_out).reverse
@@ -329,6 +332,8 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
   printf("PASS TEST1\n")
   step(1)
+  poke(c.io.config, reset_config(c.R))
+  step(1)
 
   //***********************************************************//
   // TEST 2: add3sub D2 = Z0 + Z1 - D1
@@ -341,9 +346,12 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   config.map(x => print_config(x))
 
   // Generate positive random number
-  Z1 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
-  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
-  D1 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 4
+  Z1 = BigInt(1) << 8
+  Z0 = BigInt(2) << 8
+  D1 = BigInt(3) << 8
+  //Z1 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  //Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  //D1 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
   //val Z = BigInt(0x11111111)
   //val D = BigInt(0x11111111)
 
@@ -429,6 +437,8 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   assert (D_out(2) == D_ref)
 
   printf("PASS TEST2\n")
+  step(1)
+  poke(c.io.config, reset_config(c.R))
   step(1)
 
   //***********************************************************//

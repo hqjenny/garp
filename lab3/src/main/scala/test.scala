@@ -152,4 +152,10 @@ object read_config {
   }
 }
 
-
+object reset_config {
+  def apply(size:Int) : Array[BigInt] = {
+  var config = new Array[BigInt](0)  
+  config = Array.fill(size * 24){BigInt(0)}
+  return config
+  }
+}

@@ -213,8 +213,9 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
     D_reg := io.D_in
   }
 
-  printf("logic_block in:%d %d\n", io.Z_in, io.D_in)
-  printf("logic_block:%d %d\n", Z_reg, D_reg)
+  //printf("logic_block in:%d %d\n", io.Z_in, io.D_in)
+  //printf("logic_block reg_in:%d %d\n", Z_reg_in, D_reg_in)
+  //printf("logic_block:%d %d\n", Z_reg, D_reg)
   io.Z_out := Z_reg
   io.D_out := D_reg
 
