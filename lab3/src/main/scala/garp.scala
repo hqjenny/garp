@@ -25,7 +25,11 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   //val test = Vec.fill(4){Module(new TestBlockModule()).io}
   
   // i is mapped to module's index
-  val garp_array = Seq.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
+  //val garp_array = Seq.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
+  //val garp_array = Vec.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
+  //val garp_array = Vec.fill(R){Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=8))}
+  val rows = Vec.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index)).io}
+  //val rows = Vec.fill(R){Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=8)).io}
   
   // Haven't figure out how to connect them 
   val V_wire_in = Vec.fill(23*V){Bits(width=W)}
@@ -34,12 +38,12 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   //  rows(0).mem_bus_in := Bits(0)
   //}
 
-  //rows(0).mem_bus_in := Vec.fill(23){Bits(x=0, width=W)}
-  //rows(0).H_out_above :=  Vec.fill(23){Bits(x=0, width=W)} 
-  //rows(0).G_wire_above :=  Vec.fill(G){Bits(x=0, width=W)}
-  //rows(0).H_wire_above :=  Vec.fill(33){Bits(x=0, width=W)}
+  rows(0).mem_bus_in := Vec.fill(23){Bits(x=0, width=W)}
+  rows(0).H_out_above :=  Vec.fill(23){Bits(x=0, width=W)} 
+  rows(0).G_wire_above :=  Vec.fill(G){Bits(x=0, width=W)}
+  rows(0).H_wire_above :=  Vec.fill(33){Bits(x=0, width=W)}
 
-  val rows = garp_array.map(x => x.io)
+  //val rows = garp_array.map(x => x.io)
   for(i <- 1 until R){
     rows(i).G_wire_above := rows(i-1).G_wire_below
     rows(i).H_wire_above := rows(i-1).H_wire_below
