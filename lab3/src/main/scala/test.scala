@@ -116,12 +116,12 @@ object print_config {
     else                { printf("Vout:D\t")}
 
     if (range(Gout, 2, 2) == BigInt(1)){
-      printf("Gout: 0x%x\t", range(Gout, 1, 0))
+      printf("Gout: 0x%x\t", BigInt(3) - range(Gout, 1, 0))
     }else{
       printf("Gout: no output\t")
     }
     if (range(Vout, 4, 4) == BigInt(1)){
-      printf("Vout: 0x%x\t", range(Vout, 3, 0))
+      printf("Vout: 0x%x\t", BigInt(15) - range(Vout, 3, 0))
     }else{
       printf("Vout: no output\t")
     }
