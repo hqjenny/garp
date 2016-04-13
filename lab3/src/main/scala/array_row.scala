@@ -140,13 +140,16 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     G_wire_outs(i) := LB(i).G_wire_out
   }
 
+  for(i <- 0 until G) {
+    G_wire_below_en := Bits(0)
+  }
   for (i <- 0 until 23) {
     when (LB(i).config_G_out(2).toBool) {
       switch(LB(i).config_G_out(1,0)) {
-        for(j <- 0 until 4) {
+        for(j <- 0 until G) {
           is(Bits(j, width=2)) {
             // j: 0 -> 3 en: 3 -> 0
-            G_wire_below_en(3-j)(i)
+            G_wire_below_en(3-j)(i) := Bits(x=1, width=1) 
           }
         }
       }
@@ -155,6 +158,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
 
   val GWireBulk = Vec.fill(G){Module(new GWireModule()).io}
   val GWireBB = Vec.fill(G){Module(new LoopWireBlackBox()).io}
+
   for (i <- 0 until G) {
     GWireBulk(i).G_in := G_wire_outs
     GWireBulk(i).en := G_wire_below_en(i)
@@ -164,13 +168,17 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   }
 
   // V wires
+  for(i <- 0 until V){
+    V_wire_en(i) := Bits(0)
+  }
+
   for (i <- 0 until 23) {
     when (LB(i).config_V_out(4).toBool) {
       switch(LB(i).config_V_out(3,0)) {
-        for(j <- 0 until 16) {
+        for(j <- 0 until V) {
           is(Bits(j, width=4)) {
             // j: 0 -> 3 en: 3 -> 0
-            V_wire_en(15-j)(i)
+            V_wire_en(15-j)(i) := Bits(x=1, width=1)
           }
         }
       }

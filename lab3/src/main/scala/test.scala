@@ -49,7 +49,7 @@ object print_input {
         if(range(X_in, 3,2) == BigInt(3)){
           printf("G wire pair %d", BigInt(3) - range(X_in,1,0))
         }else{
-          printf("H wire pair %d from right", BigInt(10) - range(X_in,3,0))
+          printf("H wire pair %d from left", range(X_in,3,0))
         }
         if (range(X_in, 4, 4) == BigInt(1)){printf(" below\t")}
         if (range(X_in, 4, 4) == BigInt(0)){printf(" above\t")}

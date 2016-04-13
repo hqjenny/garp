@@ -66,7 +66,7 @@ class LogicBlockInModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=
         switch(io.config_X_in(i)(log2Up(H)-1,0)){
           for(j <- 0 until H){
             is(Bits(j, width=log2Up(H))){
-              io.X_in(i) := io.H_wire_above_in(H-j-1)
+              io.X_in(i) := io.H_wire_above_in(j)
             }
           }
         }
@@ -88,7 +88,7 @@ class LogicBlockInModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=
       switch(io.config_X_in(i)(log2Up(H)-1,0)){
         for(j <- 0 until H){
           is(Bits(j, width=log2Up(H))){
-            io.X_in(i) := io.H_wire_below_in(H-j-1)
+            io.X_in(i) := io.H_wire_below_in(j)
           }
         }
       }
