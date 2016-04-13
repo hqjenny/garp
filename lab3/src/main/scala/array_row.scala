@@ -66,12 +66,11 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   io.H_wire_below := H_wire_below
   io.G_wire_below := G_wire_below
   // Initialize H_wire_below
-  //for (i <- 0 until 33){
-    //H_wire_below(i) := Bits(0)
+  for (i <- 0 until 33){
+    H_wire_below(i) := Bits(0)
+  }
 
-  //}
-
-  H_wire_below := Bits(0,width=W*33)
+  //H_wire_below := Bits(0,width=W*33)
   
   // V Wires
   for (i <- 0 until 23) {

@@ -142,7 +142,7 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
   val delete = "Configuration of \\d+ rows loaded.\n".r
   val re = """(\S+):\s+Z\:(\S+)\s+D:(\S+)\s+H:(\S+)\s+V:(\S+)\s+G:(\S+)\s+""".r
-  /*//val garp_path = sys.env("GARP")
+  //val garp_path = sys.env("GARP")
   //----------------------------------------------------------------------------------------//
   // TEST 0: add: D1 = Z0 + D0
   //----------------------------------------------------------------------------------------//
@@ -751,7 +751,7 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   printf("PASS TEST6\n")
   poke(c.io.config, reset_config(c.R))
   step(1)
-  */
+  
 
   //----------------------------------------------------------------------------------------//
   // TEST 7: sub D1 = Z0 - D0
