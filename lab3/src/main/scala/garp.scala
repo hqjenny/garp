@@ -622,11 +622,6 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
     val G_wire_below = peek(c.rows(i).G_wire_below).reverse
     val G_wire_above = peek(c.rows(i).G_wire_above).reverse
-
-    //for(j <- 0 until 33){
-     // printf("%x\t", H_wire_below(j))
-     // printf("%x\t", H_wire_above(j))
-    //}
   }
   assert (Z_out(1) == D_ref)
 
@@ -743,27 +738,661 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   step(1)
 
   //----------------------------------------------------------------------------------------//
-  // TEST 6: sub D1 = Z0 - D0
+  // TEST 6:  D1 = max(D0,Z0)
   //----------------------------------------------------------------------------------------//
-  test = "sub"
+  test = "max"
 
+  // Read in  the configuration
+  config = read_config(test, c.R)
+
+   // Print all config
+  config.map(x => print_config(x))
+
+  // Generate positive random number
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+
+  // Initialize array of simluation input  
+  Z_in = Array.fill(c.R*23){BigInt(0)}
+  D_in = Array.fill(c.R*23){BigInt(0)}
+  //for(i <- 4  until 20){
+  for(i <- 0 until 23){
+    Z_in(i) = range(Z0, 2*i+1, 2*i) 
+    D_in(i) = range(D0, 2*i+1, 2*i)
+  }
+ 
+  // Generate input for emulator
+  "mkdir -p src/main/input".!
+  "mkdir -p src/main/output".!
+  input = "src/main/input/"+test+".in"
+  output = "src/main/output/"+test+".out"
+  writer = new java.io.PrintWriter(new java.io.File(input))
+  writer.write("lc ../garp_config/examples/" + test + ".config\n")
+  // Print Z to the input
+  writer.write("sz 0 " + "%x".format(Z0) + "\n")
+  writer.write("sd 0 " + "%x".format(D0) + "\n")
+  writer.write("step\n")
+  writer.write("qa\n")
+  writer.close()
+
+  //println("Finished writing!")
+  //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  //println(input)
+  emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
+  //println(emulator_out)
+  data=delete.replaceAllIn(emulator_out, "")
+
+  // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
+  golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  println(golden_result)
+  D_ref = new BigInt(new BigInteger( golden_result(1)(2), 16))
+  
+  poke(c.io.Z_in, Z_in)
+  poke(c.io.D_in, D_in)
+  poke(c.io.test, 1)
+
+  step(1)
+  poke(c.io.config, config)
+  poke(c.io.test, 0)
+  step(1)
+  //peek(c.io.config)
+  // ATTENTION: peed returns an array with reverse indexing 
+  Z_out_array = peek(c.io.Z_out).reverse
+  D_out_array = peek(c.io.D_out).reverse
+
+  //for(i <- 0 until 23){
+  //  printf("Z_out %d %x\t", i , Z_out_array(i))
+  //}
+  
+  Z_out = new Array[BigInt](0)
+  D_out = new Array[BigInt](0)
+
+  for (i <- 0 until c.R){
+    printf("Z_out(%d) ", i)
+    //val Z_out = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    Z_out = Z_out :+ combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23) 
+    printf("%x\t", Z_out(i));
+
+    printf("D_out(%d) ", i)
+    D_out = D_out :+ combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D_out(i));
+
+    val H_wire_below = peek(c.rows(i).H_wire_below).reverse
+    val H_wire_above = peek(c.rows(i).H_wire_above).reverse
+
+  }
+  assert (D_out(1) == D_ref)
 
   printf("PASS TEST6\n")
   poke(c.io.config, reset_config(c.R))
   step(1)
+
+  //----------------------------------------------------------------------------------------//
+  // TEST 7: shiftInt32Left Z3 = Z0 << D0
+  //----------------------------------------------------------------------------------------//
+  test = "shiftInt32Left"
+
+  // Read in  the configuration
+  config = read_config(test, c.R)
+
+   // Print all config
+  config.map(x => print_config(x))
+
+  // Generate positive random number
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+
+  // Initialize array of simluation input  
+  Z_in = Array.fill(c.R*23){BigInt(0)}
+  D_in = Array.fill(c.R*23){BigInt(0)}
+  //for(i <- 4  until 20){
+  for(i <- 0 until 23){
+    Z_in(i) = range(Z0, 2*i+1, 2*i) 
+    D_in(i) = range(D0, 2*i+1, 2*i)
+  }
+ 
+  // Generate input for emulator
+  "mkdir -p src/main/input".!
+  "mkdir -p src/main/output".!
+  input = "src/main/input/"+test+".in"
+  output = "src/main/output/"+test+".out"
+  writer = new java.io.PrintWriter(new java.io.File(input))
+  writer.write("lc ../garp_config/examples/" + test + ".config\n")
+  // Print Z to the input
+  writer.write("sz 0 " + "%x".format(Z0) + "\n")
+  writer.write("sd 0 " + "%x".format(D0) + "\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("qa\n")
+  writer.close()
+
+  //println("Finished writing!")
+  //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  //println(input)
+  emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
+  //println(emulator_out)
+  data=delete.replaceAllIn(emulator_out, "")
+
+  // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
+  golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  println(golden_result)
+  D_ref = new BigInt(new BigInteger( golden_result(3)(1), 16))
   
+  poke(c.io.Z_in, Z_in)
+  poke(c.io.D_in, D_in)
+  poke(c.io.test, 1)
 
-  //----------------------------------------------------------------------------------------//
-  // TEST 7: sub D1 = Z0 - D0
-  //----------------------------------------------------------------------------------------//
-  test = "sub"
+  step(1)
+  poke(c.io.config, config)
+  poke(c.io.test, 0)
+  step(1)
+  step(1)
+  step(1)
+  //peek(c.io.config)
+  // ATTENTION: peed returns an array with reverse indexing 
+  Z_out_array = peek(c.io.Z_out).reverse
+  D_out_array = peek(c.io.D_out).reverse
 
+  //for(i <- 0 until 23){
+  //  printf("Z_out %d %x\t", i , Z_out_array(i))
+  //}
+  
+  Z_out = new Array[BigInt](0)
+  D_out = new Array[BigInt](0)
 
-  //printf("PASS TEST7\n")
-  //poke(c.io.config, reset_config(c.R))
+  for (i <- 0 until c.R){
+    printf("Z_out(%d) ", i)
+    //val Z_out = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    Z_out = Z_out :+ combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23) 
+    printf("%x\t", Z_out(i));
+
+    printf("D_out(%d) ", i)
+    D_out = D_out :+ combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D_out(i));
+
+    val H_wire_below = peek(c.rows(i).H_wire_below).reverse
+    val H_wire_above = peek(c.rows(i).H_wire_above).reverse
+
+    //for(j <- 0 until 33){
+     // printf("%x\t", H_wire_below(j))
+     // printf("%x\t", H_wire_above(j))
+    //}
+  }
+  assert (Z_out(3) == D_ref)
+
+  printf("PASS TEST7\n")
+  poke(c.io.config, reset_config(c.R))
   step(1)
 
 
+  //----------------------------------------------------------------------------------------//
+  // TEST 8: shiftInt32Right D1 = signed(Z0 >> D0)
+  //----------------------------------------------------------------------------------------//
+  test = "shiftInt32Right"
+
+ // Read in  the configuration
+  config = read_config(test, c.R)
+
+   // Print all config
+  config.map(x => print_config(x))
+
+  // Generate positive random number
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+
+  // Initialize array of simluation input  
+  Z_in = Array.fill(c.R*23){BigInt(0)}
+  D_in = Array.fill(c.R*23){BigInt(0)}
+  //for(i <- 4  until 20){
+  for(i <- 0 until 23){
+    Z_in(i) = range(Z0, 2*i+1, 2*i) 
+    D_in(i) = range(D0, 2*i+1, 2*i)
+  }
+ 
+  // Generate input for emulator
+  "mkdir -p src/main/input".!
+  "mkdir -p src/main/output".!
+  input = "src/main/input/"+test+".in"
+  output = "src/main/output/"+test+".out"
+  writer = new java.io.PrintWriter(new java.io.File(input))
+  writer.write("lc ../garp_config/examples/" + test + ".config\n")
+  // Print Z to the input
+  writer.write("sz 0 " + "%x".format(Z0) + "\n")
+  writer.write("sd 0 " + "%x".format(D0) + "\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("qa\n")
+  writer.close()
+
+  //println("Finished writing!")
+  //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  //println(input)
+  emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
+  //println(emulator_out)
+  data=delete.replaceAllIn(emulator_out, "")
+
+  // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
+  golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  println(golden_result)
+  D_ref = new BigInt(new BigInteger( golden_result(3)(1), 16))
+  
+  poke(c.io.Z_in, Z_in)
+  poke(c.io.D_in, D_in)
+  poke(c.io.test, 1)
+
+  step(1)
+  poke(c.io.config, config)
+  poke(c.io.test, 0)
+  step(1)
+  step(1)
+  step(1)
+  //peek(c.io.config)
+  // ATTENTION: peed returns an array with reverse indexing 
+  Z_out_array = peek(c.io.Z_out).reverse
+  D_out_array = peek(c.io.D_out).reverse
+
+  //for(i <- 0 until 23){
+  //  printf("Z_out %d %x\t", i , Z_out_array(i))
+  //}
+  
+  Z_out = new Array[BigInt](0)
+  D_out = new Array[BigInt](0)
+
+  for (i <- 0 until c.R){
+    printf("Z_out(%d) ", i)
+    //val Z_out = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    Z_out = Z_out :+ combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23) 
+    printf("%x\t", Z_out(i));
+
+    printf("D_out(%d) ", i)
+    D_out = D_out :+ combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D_out(i));
+
+    val H_wire_below = peek(c.rows(i).H_wire_below).reverse
+    val H_wire_above = peek(c.rows(i).H_wire_above).reverse
+
+  }
+  assert (Z_out(3) == D_ref)
+
+
+  printf("PASS TEST8\n")
+  poke(c.io.config, reset_config(c.R))
+  step(1)
+
+  //----------------------------------------------------------------------------------------//
+  // TEST 9: shiftUint32Right D1 = Z0 >> D0
+  //----------------------------------------------------------------------------------------//
+  test = "shiftUint32Right"
+
+ // Read in  the configuration
+  config = read_config(test, c.R)
+
+   // Print all config
+  config.map(x => print_config(x))
+
+  // Generate positive random number
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+
+  // Initialize array of simluation input  
+  Z_in = Array.fill(c.R*23){BigInt(0)}
+  D_in = Array.fill(c.R*23){BigInt(0)}
+  //for(i <- 4  until 20){
+  for(i <- 0 until 23){
+    Z_in(i) = range(Z0, 2*i+1, 2*i) 
+    D_in(i) = range(D0, 2*i+1, 2*i)
+  }
+ 
+  // Generate input for emulator
+  "mkdir -p src/main/input".!
+  "mkdir -p src/main/output".!
+  input = "src/main/input/"+test+".in"
+  output = "src/main/output/"+test+".out"
+  writer = new java.io.PrintWriter(new java.io.File(input))
+  writer.write("lc ../garp_config/examples/" + test + ".config\n")
+  // Print Z to the input
+  writer.write("sz 0 " + "%x".format(Z0) + "\n")
+  writer.write("sd 0 " + "%x".format(D0) + "\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("qa\n")
+  writer.close()
+
+  //println("Finished writing!")
+  //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  //println(input)
+  emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
+  //println(emulator_out)
+  data=delete.replaceAllIn(emulator_out, "")
+
+  // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
+  golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  println(golden_result)
+  D_ref = new BigInt(new BigInteger( golden_result(3)(1), 16))
+  
+  poke(c.io.Z_in, Z_in)
+  poke(c.io.D_in, D_in)
+  poke(c.io.test, 1)
+
+  step(1)
+  poke(c.io.config, config)
+  poke(c.io.test, 0)
+  step(1)
+  step(1)
+  step(1)
+  //peek(c.io.config)
+  // ATTENTION: peed returns an array with reverse indexing 
+  Z_out_array = peek(c.io.Z_out).reverse
+  D_out_array = peek(c.io.D_out).reverse
+
+  Z_out = new Array[BigInt](0)
+  D_out = new Array[BigInt](0)
+
+  for (i <- 0 until c.R){
+    printf("Z_out(%d) ", i)
+    //val Z_out = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    Z_out = Z_out :+ combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23) 
+    printf("%x\t", Z_out(i));
+
+    printf("D_out(%d) ", i)
+    D_out = D_out :+ combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D_out(i));
+
+    val H_wire_below = peek(c.rows(i).H_wire_below).reverse
+    val H_wire_above = peek(c.rows(i).H_wire_above).reverse
+  }
+  assert (Z_out(3) == D_ref)
+
+  printf("PASS TEST9\n")
+  poke(c.io.config, reset_config(c.R))
+  step(1)
+
+  //----------------------------------------------------------------------------------------//
+  // TEST 10: divUint32By3 Z4 = Z0 / 3
+  //----------------------------------------------------------------------------------------//
+  test = "divUint32By3"
+
+ // Read in  the configuration
+  config = read_config(test, c.R)
+
+   // Print all config
+  config.map(x => print_config(x))
+
+  // Generate positive random number
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+
+  // Initialize array of simluation input  
+  Z_in = Array.fill(c.R*23){BigInt(0)}
+  D_in = Array.fill(c.R*23){BigInt(0)}
+  //for(i <- 4  until 20){
+  for(i <- 0 until 23){
+    Z_in(i) = range(Z0, 2*i+1, 2*i) 
+    D_in(i) = range(D0, 2*i+1, 2*i)
+  }
+ 
+  // Generate input for emulator
+  "mkdir -p src/main/input".!
+  "mkdir -p src/main/output".!
+  input = "src/main/input/"+test+".in"
+  output = "src/main/output/"+test+".out"
+  writer = new java.io.PrintWriter(new java.io.File(input))
+  writer.write("lc ../garp_config/examples/" + test + ".config\n")
+  // Print Z to the input
+  writer.write("sz 0 " + "%x".format(Z0) + "\n")
+  writer.write("sd 0 " + "%x".format(D0) + "\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("qa\n")
+  writer.close()
+
+  //println("Finished writing!")
+  //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  //println(input)
+  emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
+  //println(emulator_out)
+  data=delete.replaceAllIn(emulator_out, "")
+
+  // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
+  golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  println(golden_result)
+  D_ref = new BigInt(new BigInteger( golden_result(4)(1), 16))
+  
+  poke(c.io.Z_in, Z_in)
+  poke(c.io.D_in, D_in)
+  poke(c.io.test, 1)
+
+  step(1)
+  poke(c.io.config, config)
+  poke(c.io.test, 0)
+  step(1)
+  step(1)
+  step(1)
+  step(1)
+  //peek(c.io.config)
+  // ATTENTION: peed returns an array with reverse indexing 
+  Z_out_array = peek(c.io.Z_out).reverse
+  D_out_array = peek(c.io.D_out).reverse
+
+  Z_out = new Array[BigInt](0)
+  D_out = new Array[BigInt](0)
+
+  for (i <- 0 until c.R){
+    printf("Z_out(%d) ", i)
+    //val Z_out = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    Z_out = Z_out :+ combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23) 
+    printf("%x\t", Z_out(i));
+
+    printf("D_out(%d) ", i)
+    D_out = D_out :+ combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D_out(i));
+
+    val H_wire_below = peek(c.rows(i).H_wire_below).reverse
+    val H_wire_above = peek(c.rows(i).H_wire_above).reverse
+  }
+  assert (Z_out(4) == D_ref)
+
+
+  printf("PASS TEST10\n")
+  poke(c.io.config, reset_config(c.R))
+  step(1)
+
+  //----------------------------------------------------------------------------------------//
+  // TEST 11: divUint32By5 Z4 = Z0 / 5
+  //----------------------------------------------------------------------------------------//
+  test = "divUint32By5"
+
+ // Read in  the configuration
+  config = read_config(test, c.R)
+
+   // Print all config
+  config.map(x => print_config(x))
+
+  // Generate positive random number
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+
+  // Initialize array of simluation input  
+  Z_in = Array.fill(c.R*23){BigInt(0)}
+  D_in = Array.fill(c.R*23){BigInt(0)}
+  //for(i <- 4  until 20){
+  for(i <- 0 until 23){
+    Z_in(i) = range(Z0, 2*i+1, 2*i) 
+    D_in(i) = range(D0, 2*i+1, 2*i)
+  }
+ 
+  // Generate input for emulator
+  "mkdir -p src/main/input".!
+  "mkdir -p src/main/output".!
+  input = "src/main/input/"+test+".in"
+  output = "src/main/output/"+test+".out"
+  writer = new java.io.PrintWriter(new java.io.File(input))
+  writer.write("lc ../garp_config/examples/" + test + ".config\n")
+  // Print Z to the input
+  writer.write("sz 0 " + "%x".format(Z0) + "\n")
+  writer.write("sd 0 " + "%x".format(D0) + "\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("qa\n")
+  writer.close()
+
+  //println("Finished writing!")
+  //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  //println(input)
+  emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
+  //println(emulator_out)
+  data=delete.replaceAllIn(emulator_out, "")
+
+  // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
+  golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  println(golden_result)
+  D_ref = new BigInt(new BigInteger( golden_result(4)(1), 16))
+  
+  poke(c.io.Z_in, Z_in)
+  poke(c.io.D_in, D_in)
+  poke(c.io.test, 1)
+
+  step(1)
+  poke(c.io.config, config)
+  poke(c.io.test, 0)
+  step(1)
+  step(1)
+  step(1)
+  step(1)
+  //peek(c.io.config)
+  // ATTENTION: peed returns an array with reverse indexing 
+  Z_out_array = peek(c.io.Z_out).reverse
+  D_out_array = peek(c.io.D_out).reverse
+
+  Z_out = new Array[BigInt](0)
+  D_out = new Array[BigInt](0)
+
+  for (i <- 0 until c.R){
+    printf("Z_out(%d) ", i)
+    //val Z_out = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    Z_out = Z_out :+ combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23) 
+    printf("%x\t", Z_out(i));
+
+    printf("D_out(%d) ", i)
+    D_out = D_out :+ combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D_out(i));
+
+    val H_wire_below = peek(c.rows(i).H_wire_below).reverse
+    val H_wire_above = peek(c.rows(i).H_wire_above).reverse
+  }
+  assert (Z_out(4) == D_ref)
+
+  printf("PASS TEST11\n")
+  poke(c.io.config, reset_config(c.R))
+  step(1)
+
+  //----------------------------------------------------------------------------------------//
+  // TEST 12: divUint32By9 Z4 = Z0 / 9
+  //----------------------------------------------------------------------------------------//
+  test = "divUint32By9"
+
+ // Read in  the configuration
+  config = read_config(test, c.R)
+
+   // Print all config
+  config.map(x => print_config(x))
+
+  // Generate positive random number
+  Z0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+  D0 = BigInt(rand.nextInt(Integer.MAX_VALUE)) << 8
+
+  // Initialize array of simluation input  
+  Z_in = Array.fill(c.R*23){BigInt(0)}
+  D_in = Array.fill(c.R*23){BigInt(0)}
+  //for(i <- 4  until 20){
+  for(i <- 0 until 23){
+    Z_in(i) = range(Z0, 2*i+1, 2*i) 
+    D_in(i) = range(D0, 2*i+1, 2*i)
+  }
+ 
+  // Generate input for emulator
+  "mkdir -p src/main/input".!
+  "mkdir -p src/main/output".!
+  input = "src/main/input/"+test+".in"
+  output = "src/main/output/"+test+".out"
+  writer = new java.io.PrintWriter(new java.io.File(input))
+  writer.write("lc ../garp_config/examples/" + test + ".config\n")
+  // Print Z to the input
+  writer.write("sz 0 " + "%x".format(Z0) + "\n")
+  writer.write("sd 0 " + "%x".format(D0) + "\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("step\n")
+  writer.write("qa\n")
+  writer.close()
+
+  //println("Finished writing!")
+  //"../garp_config/development/gatoconfig/build/gatoconfig " ! 
+  //println(input)
+  emulator_out=("../garp_config/development/ga-emulate/build/ga-emulate -x " #< new java.io.File(input)).!!
+  //println(emulator_out)
+  data=delete.replaceAllIn(emulator_out, "")
+
+  // 2D array (row index) (index:0, Z:1, D:2, H:3, V:4, G:5, C:6)
+  golden_result = re.findAllIn(data).matchData.toList.map(m=>m.subgroups)
+  println(golden_result)
+  D_ref = new BigInt(new BigInteger( golden_result(4)(1), 16))
+  
+  poke(c.io.Z_in, Z_in)
+  poke(c.io.D_in, D_in)
+  poke(c.io.test, 1)
+
+  step(1)
+  poke(c.io.config, config)
+  poke(c.io.test, 0)
+  step(1)
+  step(1)
+  step(1)
+  step(1)
+  //peek(c.io.config)
+  // ATTENTION: peed returns an array with reverse indexing 
+  Z_out_array = peek(c.io.Z_out).reverse
+  D_out_array = peek(c.io.D_out).reverse
+
+  Z_out = new Array[BigInt](0)
+  D_out = new Array[BigInt](0)
+
+  for (i <- 0 until c.R){
+    printf("Z_out(%d) ", i)
+    //val Z_out = combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23)
+    Z_out = Z_out :+ combine_array(Z_out_array.slice(i * 23, (i+1)*23), 23) 
+    printf("%x\t", Z_out(i));
+
+    printf("D_out(%d) ", i)
+    D_out = D_out :+ combine_array(D_out_array.slice(i * 23, (i+1)*23), 23)
+    printf("%x\t", D_out(i));
+
+    val H_wire_below = peek(c.rows(i).H_wire_below).reverse
+    val H_wire_above = peek(c.rows(i).H_wire_above).reverse
+  }
+  assert (Z_out(4) == D_ref)
+
+  printf("PASS TEST11\n")
+  poke(c.io.config, reset_config(c.R))
+  step(1)
+
+
+  // Needs memory
+  // test = "addCharVector"
+  // test = "addInt32Vector"
+  // test = "demandRead"
+
+  // Needs V wires
+  // test = "divInt32By15"
+  // test = "mul16To32_1"
 
 }
 

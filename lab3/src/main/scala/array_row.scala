@@ -50,7 +50,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     val mem_bus_out = Vec.fill(23){Bits(OUTPUT, width=W)}
   }
 
-  printf("index%d\n", UInt(I));
+  //printf("index%d\n", UInt(I));
   // 1 Control Blocks per row
   val CB = Module(new ControlBlockModule()).io
   // 23 Logic Blocks per row
