@@ -5,7 +5,7 @@ import sys.process._
 import java.math.BigInteger
 
 
-class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=7) extends Module {
+class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=8) extends Module {
   
 
   val io = new Bundle {
@@ -13,11 +13,11 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     //val sel =Vec.fill(R){Bits(INPUT, width=2)}
     //val out =Vec.fill(R){Bits(OUTPUT, width=W)}
     
-    val config = Vec.fill(24*R){Bits(INPUT, width=64)}
-    val Z_in = Vec.fill(23*R){Bits(INPUT, width=W)}
-    val D_in = Vec.fill(23*R){Bits(INPUT, width=W)}
-    val Z_out = Vec.fill(23*R){Bits(OUTPUT, width=W)}
-    val D_out = Vec.fill(23*R){Bits(OUTPUT, width=W)}
+    val config = Vec(24 * R, Bits(INPUT, width=64))
+    val Z_in = Vec(23 * R, Bits(INPUT, width=W))
+    val D_in = Vec(23 * R, Bits(INPUT, width=W))
+    val Z_out = Vec(23 * R, Bits(OUTPUT, width=W))
+    val D_out = Vec(23 * R, Bits(OUTPUT, width=W))
     val test = Bool(INPUT)
 
   }
@@ -43,10 +43,10 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   //  rows(0).mem_bus_in := Bits(0)
   //}
 
-  rows(0).mem_bus_in := Vec.fill(23){Bits(x=0, width=W)}
-  rows(0).H_out_above :=  Vec.fill(23){Bits(x=0, width=W)} 
-  rows(0).G_wire_above :=  Vec.fill(G){Bits(x=0, width=W)}
-  rows(0).H_wire_above :=  Vec.fill(33){Bits(x=0, width=W)}
+  rows(0).mem_bus_in := Vec.fill(23){Bits(width=W)}
+  rows(0).H_out_above :=  Vec.fill(23){Bits(width=W)} 
+  rows(0).G_wire_above :=  Vec.fill(G){Bits(width=W)}
+  rows(0).H_wire_above :=  Vec.fill(33){Bits(width=W)}
 
   //val rows = garp_array.map(x => x.io)
   for(i <- 1 until R){

@@ -93,7 +93,8 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
   // A, B, C, D
   val X_in = Vec.fill(4){Bits(width=W)}
 
-  val IN_MUX = Module(new LogicBlockInModule(W, V, H, G)).io
+  //val IN_MUX = Module(new LogicBlockInModule(W, V, H, G)).io
+  val IN_MUX = Module(new LogicBlockInBBModule(W, V, H, G)).io
   IN_MUX.V_wire_in := io.V_wire_in
   IN_MUX.H_wire_above_in := io.H_wire_above_in
   IN_MUX.H_wire_below_in := io.H_wire_below_in
