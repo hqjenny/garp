@@ -22,6 +22,8 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   val io = new Bundle {
     // 23 x V wires
     val V_wire_in = Vec.fill(23*V){Bits(INPUT, width=W)}
+    val V_wire_out = Vec.fill(23*V){Bits(OUTPUT, width=W)}
+    val V_wire_en = Vec.fill(V){Bits(OUTPUT, width=23)}
 
     val G_wire_above =  Vec.fill(G){Bits(INPUT, width=W)}
     val H_wire_above =  Vec.fill(33){Bits(INPUT, width=W)}
@@ -57,6 +59,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   val LB = Vec.fill(23){Module(new LogicBlockModule()).io}
   // Enable driver to a specific V wire, each block has 16 wires 
   val V_wire_en = Vec.fill(V){Bits(width=23)}
+  io.V_wire_en := V_wire_en
   val G_wire_below_en = Vec.fill(G){Bits(width=23)}
 
   // 4 G Wires per row
@@ -76,6 +79,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   for (i <- 0 until 23) {
     for (j <- 0 until V) {
       LB(i).V_wire_in(j) := io.V_wire_in(i * V + j)
+      io.V_wire_out(i * V + j) := LB(i).V_wire_out
     }
   }
 

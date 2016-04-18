@@ -21,6 +21,11 @@ class Vwire2BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=2)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
+
 }
 
 class Vwire3BB(val W: Int=2) extends Module {
@@ -30,6 +35,11 @@ class Vwire3BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=3)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
+
 }
 
 class Vwire4BB(val W: Int=2) extends Module {
@@ -39,6 +49,11 @@ class Vwire4BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=4)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
+
 }
 
 class Vwire6BB(val W: Int=2) extends Module {
@@ -48,6 +63,11 @@ class Vwire6BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=6)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
+
 }
 
 class Vwire8BB(val W: Int=2) extends Module {
@@ -57,6 +77,11 @@ class Vwire8BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=8)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
+
 }
 
 class Vwire12BB(val W: Int=2) extends Module {
@@ -66,6 +91,10 @@ class Vwire12BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=12)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
 }
 
 class Vwire16BB(val W: Int=2) extends Module {
@@ -75,6 +104,10 @@ class Vwire16BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=16)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
 }
 
 class Vwire24BB(val W: Int=2) extends Module {
@@ -84,6 +117,10 @@ class Vwire24BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=24)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
 }
 
 class Vwire32BB(val W: Int=2) extends Module {
@@ -93,6 +130,10 @@ class Vwire32BB(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W)
   }
   //Need blackbox
+  val VwireBlock = Module(new VwireBlackBox(W=W, L=32)).io
+  VwireBlock.in := io.in
+  VwireBlock.en := io.en
+  io.out := VwireBlock.out
 }
 
 class Vwire(val N: Int, val W: Int=2) extends Module {

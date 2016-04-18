@@ -37,7 +37,28 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   //val rows = Vec.fill(R){Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=8)).io}
    
   // Haven't figure out how to connect them 
-  val V_wire_in = Vec.fill(23*V){Bits(width=W)}
+  //val V_wire_in = Vec.fill(23*V){Bits(width=W)}
+/*
+  val V_wire_block = Module(new VwireModule(R=8)).io
+  //val VwirePorts  = Vec.fill(R){Vec.fill(C){Vec.fill(V){new BusPort(W)}}}
+       
+  for (i <- 0 until R){
+    // For each row
+    for (j <- 0 until 23){
+      for (k <- 0 until V ) {
+
+        // For row i, col j, wire k
+        rows(i).V_wire_out(j * 23 + k)
+      }
+    }
+  }
+        for (k <- 0 until C) {
+          current_Vwires(k).in(row - first) := current_VwirePorts(k)(vwire_index).in
+          current_Vwires(k).en(row - first) := current_VwirePorts(k)(vwire_index).en
+          current_VwirePorts(k)(vwire_index).out := current_Vwires(k).out
+        }
+*/
+
 
   //for (i <- 0 until 23){
   //  rows(0).mem_bus_in := Bits(0)
@@ -1384,15 +1405,16 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   poke(c.io.config, reset_config(c.R))
   step(1)
 
+  // Needs V wires
+  // test = "divInt32By15"
+  // test = "mul16To32_1"
+
+
 
   // Needs memory
   // test = "addCharVector"
   // test = "addInt32Vector"
   // test = "demandRead"
-
-  // Needs V wires
-  // test = "divInt32By15"
-  // test = "mul16To32_1"
 
 }
 
