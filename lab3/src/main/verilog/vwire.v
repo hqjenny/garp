@@ -12,7 +12,7 @@ module vwire #(parameter W=2,
 	genvar i;
 	generate 
 	for (i = 0; i < L; i = i + 1) begin: for_genenrate
-		tsbuffer#(.W(2)) tsb(out, in[i * W + 1 :i * W], en[i]);
+		tsbuffer#(.W(2)) tsb(en[i], in[i * W + 1 :i * W], out);
 	end
 	endgenerate
 
