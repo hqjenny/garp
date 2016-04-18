@@ -23,7 +23,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     // 23 x V wires
     val V_wire_in = Vec.fill(23*V){Bits(INPUT, width=W)}
     val V_wire_out = Vec.fill(23*V){Bits(OUTPUT, width=W)}
-    val V_wire_en = Vec.fill(V){Bits(OUTPUT, width=23)}
+    val V_wire_en = Vec.fill(23){Bits(OUTPUT, width=V)}
 
     val G_wire_above =  Vec.fill(G){Bits(INPUT, width=W)}
     val H_wire_above =  Vec.fill(33){Bits(INPUT, width=W)}
@@ -58,7 +58,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   // 23 Logic Blocks per row
   val LB = Vec.fill(23){Module(new LogicBlockModule()).io}
   // Enable driver to a specific V wire, each block has 16 wires 
-  val V_wire_en = Vec.fill(V){Bits(width=23)}
+  val V_wire_en = Vec.fill(23){Bits(width=V)}
   io.V_wire_en := V_wire_en
   val G_wire_below_en = Vec.fill(G){Bits(width=23)}
 
@@ -171,7 +171,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   }
 
   // V wires
-  for(i <- 0 until V){
+  for(i <- 0 until 23){
     V_wire_en(i) := Bits(0)
   }
 
@@ -181,7 +181,8 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
         for(j <- 0 until V) {
           is(Bits(j, width=4)) {
             // j: 0 -> 3 en: 3 -> 0
-            V_wire_en(15-j)(i) := Bits(x=1, width=1)
+            //V_wire_en(15-j)(i) := Bits(x=1, width=1)
+            V_wire_en(i)(15-j) := Bits(x=1, width=1)
           }
         }
       }
