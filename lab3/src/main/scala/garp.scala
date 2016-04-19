@@ -5,7 +5,7 @@ import sys.process._
 import java.math.BigInteger
 
 
-class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=8) extends Module {
+class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=32) extends Module {
   
 
   val io = new Bundle {
@@ -39,7 +39,7 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   // Haven't figure out how to connect them 
   //val V_wire_in = Vec.fill(23*V){Bits(width=W)}
 
-  val V_wire_block = Module(new VwireModule(R=8)).io
+  val V_wire_block = Module(new VwireModule(R=R)).io
   //val VwirePorts  = Vec.fill(R){Vec.fill(C){Vec.fill(V){new BusPort(W)}}}
        
   for (i <- 0 until R){
