@@ -1,0 +1,38 @@
+#CFLAGS=-Wall -O0 -I../include 
+CFLAGS=-Wall -O0 -ftree-ter
+#CC=riscv64-unknown-linux-gnu-gcc
+CC=riscv64-unknown-elf-gcc
+#OBJDUMP=riscv64-unknown-linux-gnu-objdump
+OBJDUMP=riscv64-unknown-elf-objdump
+
+HEX=$(addsuffix .hex,$(BM_TESTS))
+DUMP=$(addsuffix .dump,$(BM_TESTS))
+RV=$(addsuffix .rv,$(BM_TESTS))
+
+OUTPUTS=$(PK_TESTS) $(HEX) $(DUMP) $(RV)
+
+OBJS=$(addsuffix .o,$(BM_TESTS) $(PK_TESTS))
+
+all: $(OUTPUTS)
+
+%.hex: %.rv
+	elf2hex 16 32768 $< > $@
+
+%.dump: %.rv
+	$(OBJDUMP) -D $< > $@
+
+$(OBJS): %.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.rv: %.o
+	$(CC) $(CFLAGS) $<  -o $@
+
+#%.rv: %.o ../init.S ../link.ld
+#        $(CC) $(CFLAGS) ../init.S $< -static -nostdlib -T../link.ld -o $@
+
+#$(PK_TESTS): %: %.o
+#       $(CC) $< -static -o $@
+
+clean:
+	rm -f $(OUTPUTS) *.o
+                                
