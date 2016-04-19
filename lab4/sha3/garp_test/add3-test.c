@@ -14,6 +14,14 @@ typedef unsigned int bits32;
 		asm volatile ("custom0 %[rd], %[rs1], %[rs2], %[funct]" : :[rd]"i"(clock_count), [rs1]"r"(rt), [rs2]"i"(row_num), [funct]"i"(4|R));\
         	asm volatile ("fence");\
 	})
+
+#define mfga(rt, row_num, R, clock_count) \
+	({ \
+        	asm volatile ("fence");\
+		asm volatile ("custom0 %[rd], %[rs1], %[rs2], %[funct]" : [rd]"=r"(rt) : [rs1]"i"(clock_count), [rs2]"i"(row_num), [funct]"i"(6|R));\
+        	asm volatile ("fence");\
+	})
+
 //static int funct = 2;
 // R = 0 -> Z; R = 1 -> D
 /*void mtga (bits32 rt, bits32 row_num, bits32 R, bits32 clock_count){ 
@@ -37,6 +45,7 @@ int add3(int a, int b, int c){
 
         unsigned int rd = 0;
 
+	mfga(rd, 2, D, 0);
 	// mfga
         return rd;
 }
