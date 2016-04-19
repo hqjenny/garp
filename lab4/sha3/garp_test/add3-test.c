@@ -8,15 +8,21 @@ typedef unsigned int bits32;
 #define D 1
 #define NUMITERS 10000
 
+#define mtga(rt, row_num, R, clock_count) \
+	({ \
+        	asm volatile ("fence");\
+		asm volatile ("custom0 %[rd], %[rs1], %[rs2], %[funct]" : :[rd]"i"(clock_count), [rs1]"r"(rt), [rs2]"i"(row_num), [funct]"i"(4|R));\
+        	asm volatile ("fence");\
+	})
 //static int funct = 2;
 // R = 0 -> Z; R = 1 -> D
-void mtga (bits32 rt, bits32 row_num, bits32 R, bits32 clock_count){ 
+/*void mtga (bits32 rt, bits32 row_num, bits32 R, bits32 clock_count){ 
 	bits32 funct = 4 | R;
 	
         asm volatile ("fence");
         asm volatile ("custom0 %[rd], %[rs1], %[rs2], %[funct]" : [rd]"=r"(clock_count) :  [rs1]"r"(rt), [rs2]"i"(row_num), [funct]"i"(funct));
         asm volatile ("fence");
-}
+}*/
 
 void gaconf(unsigned int * rt){
         asm volatile ("fence");
