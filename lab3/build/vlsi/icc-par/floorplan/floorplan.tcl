@@ -33,29 +33,27 @@ add_row \
   -tile_name unit
 
 set_fp_placement_strategy -macros_on_edge auto  
-set_attribute [all_macro_cells] is_fixed false
-set_attribute [all_macro_cells] dont_touch false
+#set_attribute [all_macro_cells] is_fixed false
+#set_attribute [all_macro_cells] dont_touch false
 
 set_fp_macro_options [all_macro_cells ] -legal_orientation {W E FW FE}
 set_keepout_margin -type soft -north -outer {2 2 2 2} [all_macro_cells]
 
+#set_object_boundary GarpAccel/TestBlockModule -bbox "100 60 100 60"
+#set_object_boundary TestBlockModule_1 -bbox "40 00 40 00"
 
+#set_fp_relative_location -name GarpAccel/TestBlockModule_2 -target_cell GarpAccel/TestBlockModule_1 -target_orientation N -target_corner tl -anchor_corner tl -x_offset 10 -y_offset 0
 
-set_object_boundary GarpAccel/TestBlockModule -bbox "100 60 100 60"
-set_object_boundary TestBlockModule_1 -bbox "40 00 40 00"
+#set_fp_relative_location -name TestBlockModule_3 -target_cell TestBlockModule_2 -target_orientation N -target_corner tl -anchor_corner tl -x_offset 10 -y_offset 0
 
-set_fp_relative_location -name GarpAccel/TestBlockModule_2 -target_cell GarpAccel/TestBlockModule_1 -target_orientation N -target_corner tl -anchor_corner tl -x_offset 10 -y_offset 0
+#puts "Set floorplan contraints"
 
-set_fp_relative_location -name TestBlockModule_3 -target_cell TestBlockModule_2 -target_orientation N -target_corner tl -anchor_corner tl -x_offset 10 -y_offset 0
+#create_fp_placement -no_legalize
+#set_attribute [all_macro_cells] is_fixed true
+#set_attribute [all_macro_cells] dont_touch true
 
-puts "Set floorplan contraints"
-
-create_fp_placement -no_legalize
-set_attribute [all_macro_cells] is_fixed true
-set_attribute [all_macro_cells] dont_touch true
-
-save_mw_cel -as floorplan
-echo Floorplanning
+#save_mw_cel -as floorplan
+#echo Floorplanning
 #
 #
 #set_fp_macro_array -name vrf -elements [list [get_cells "Tile/core_vu/vxu/b8lane/vuVXU_Banked8_Bank_rfile_rfile_sram Tile/core_vu/vxu/b8lane/vuVXU_Banked8_Bank_1/rfile_rfile_sram Tile/core_vu/vxu/b8lane/vuVXU_Banked8_Bank_2/rfile_rfile_sram Tile/core_vu/vxu/b8lane/vuVXU_Banked8_Bank_3/rfile_rfile_sram"] [get_cells "Tile/core_vu/vxu/b8lane/vuVXU_Banked8_Bank_4/rfile_rfile_sram Tile/core_vu/vxu/b8lane/vuVXU_Banked8_Bank_5/rfile_rfile_sram Tile/core_vu/vxu/b8lane/vuVXU_Banked8_Bank_6/rfile_rfile_sram Tile/core_vu/vxu/b8lane/vuVXU_Banked8_Bank_7/rfile_rfile_sram"]] -x_offset 10 -y_offset 10 -align_2d left-bottom -rectilinear
