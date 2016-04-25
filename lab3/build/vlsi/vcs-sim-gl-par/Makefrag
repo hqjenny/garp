@@ -12,11 +12,16 @@
 #--------------------------------------------------------------------
 
 # Verilog sources
+blackbox_srcs = $(wildcard $(base_dir)/src/main/verilog/*.v)
+blackbox_files = $(notdir $(blackbox_srcs))
+blackbox_verilog_src = $(addprefix $(base_dir)/src/main/verilog/,$(blackbox_files))
+
 
 vsrcs = \
   $(cells_v) \
   $(icc_v) \
   $(build_dir)/generated-src/$(TOP).$(CONFIG)-harness.v \
+  $(blackbox_verilog_src) \
 
 vpi_obj = $(build_dir)/generated-src/vpi.o
 

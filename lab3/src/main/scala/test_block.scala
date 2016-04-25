@@ -8,13 +8,19 @@ class TestBlockModule(val W: Int=2) extends Module {
     val sel = Bits(INPUT, width=2)
     val out = Bits(OUTPUT, width=W) 
   }
-  io.out := Bits(0)
+
+  val tsb = Module(new TSBufferBlackBox(W)).io
+  tsb.in :=  io.in 
+  tsb.en := io.sel(0)
+  io.out := tsb.out
+
+  /*io.out := Bits(0)
   for(i <- 0 until 2){
     when (io.sel(i) === Bits(0, width=1)){
       io.out(i) := io.in(0)
     }.otherwise {
       io.out(i) := io.in(1)
     }
-  }
+  }*/
 }
 

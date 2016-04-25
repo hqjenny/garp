@@ -5,13 +5,13 @@ import sys.process._
 import java.math.BigInteger
 
 
-class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=32) extends Module {
+class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R: Int=4) extends Module {
   
 
   val io = new Bundle {
-    //val in = Vec.fill(R){Bits(INPUT, width=W)} 
-    //val sel =Vec.fill(R){Bits(INPUT, width=2)}
-    //val out =Vec.fill(R){Bits(OUTPUT, width=W)}
+    val in = Vec.fill(R){Bits(INPUT, width=W)} 
+    val sel =Vec.fill(R){Bits(INPUT, width=2)}
+    val out =Vec.fill(R){Bits(OUTPUT, width=W)}
     
     val config = Vec(24 * R, Bits(INPUT, width=64))
     val Z_in = Vec(23 * R, Bits(INPUT, width=W))
@@ -28,7 +28,7 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     test(i).sel := io.sel(i)
     io.out(i) := test(i).out  
   }*/
-  
+
   // i is mapped to module's index
   //val garp_array = Seq.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
   //val garp_array = Vec.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
@@ -123,7 +123,6 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
 
   }
 
-
   val LB = Module(new LogicBlockModule)
   io <> LB.io*/ 
 }
@@ -132,7 +131,7 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
 class GarpAccelTests(c: GarpAccel) extends Tester(c) {
 
   var test = ""
-  var config: Array[BigInt]= _
+/*  var config: Array[BigInt]= _
   val rand = scala.util.Random
   var Z0: BigInt= _
   var D0: BigInt= _
@@ -1686,7 +1685,7 @@ class GarpAccelTests(c: GarpAccel) extends Tester(c) {
   // test = "addCharVector"
   // test = "addInt32Vector"
   // test = "demandRead"
-
+*/
 }
 
 

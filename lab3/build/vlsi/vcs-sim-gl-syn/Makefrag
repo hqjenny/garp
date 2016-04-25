@@ -3,11 +3,16 @@
 #--------------------------------------------------------------------
 
 # Verilog sources
+blackbox_srcs = $(wildcard $(base_dir)/src/main/verilog/*.v)
+blackbox_files = $(notdir $(blackbox_srcs))
+blackbox_verilog_src = $(addprefix $(base_dir)/src/main/verilog/,$(blackbox_files))
+
 
 sim_vsrcs = \
 	$(cells_v) \
 	$(dc_v) \
-  $(build_dir)/generated-src/$(TOP).$(CONFIG)-harness.v \
+  	$(build_dir)/generated-src/$(TOP).$(CONFIG)-harness.v \
+  	$(blackbox_verilog_src) \
 	#$(build_dir)/generated-src/memdessertMemDessert.v \
 	#$(vlsi_dir)/testbench/riscvInst.vh \
 	#$(vlsi_dir)/testbench/rocketConst.vh \

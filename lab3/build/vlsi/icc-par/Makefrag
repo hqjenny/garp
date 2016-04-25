@@ -79,7 +79,7 @@ outputs_misc_tcl = $(icc_scripts_dir)/find_regs.tcl
 icc_common_vars = \
 	set DESIGN_NAME                 "$(icc_toplevel)";\n \
 	set STRIP_PATH                  "$(icc_testharness)/$(icc_toplevelinst)";\n \
-	set ADDITIONAL_SEARCH_PATH      "$(cells_db_dir) $(srams_dir) $(dc_cur_build_dir)/$(dc_results_dir)";\n \
+	set ADDITIONAL_SEARCH_PATH      "$(cells_db_dir) $(srams_dir) $(blackbox_dir)  $(dc_cur_build_dir)/$(dc_results_dir)";\n \
 	set TARGET_LIBRARY_FILES        "$(cells_db) $(srams_db)";\n \
 	set MW_REFERENCE_LIB_DIRS       "$(cells_mw) $(srams_mw)";\n \
 	set MIN_LIBRARY_FILES           "$(min_library)";\n \

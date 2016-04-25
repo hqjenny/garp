@@ -42,8 +42,8 @@ set_output_delay ${OUTPUT_DELAY} -clock [get_clocks clk] [all_outputs]
 # set_ungroup [get_designs FPUDFMAPipe] false
 # set_ungroup [get_designs vuVXU_Banked8_FU_imul] false
 # set_ungroup [get_designs vuVXU_Banked8_FU_conv] false
-set_ungroup [get_designs Frontend] false
-set_ungroup [get_designs HellaCache] false
+#set_ungroup [get_designs Frontend] false
+#set_ungroup [get_designs HellaCache] false
 
 set_isolate_ports [all_outputs] -type buffer
 set_isolate_ports [remove_from_collection [all_inputs] clk] -type buffer -force
