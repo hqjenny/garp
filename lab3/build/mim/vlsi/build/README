@@ -1,0 +1,34 @@
+This folder contains the ASIC scripts for building DREAMER.
+
+The recommended design flow is:
+cd dc-syn
+make
+cd ../icc-par
+make
+
+This should do automatic dependency resolution, including tracking RTL changes and building all the SRAMs in ../srams. If the srams don't automatically build, try running "make srams".
+Note: cacti requires X forwarding to run.
+
+Passing parameters to make allow different targets to be selected.
+Examples:
+make TARGET=Fix
+  builds a single tile
+make TARGET=NewFixGrid ROWS=8 COLS=8 PORTS=grid ARRAY=grid
+  builds an 8x8 mesh network (see NetworkGenerator in fabric-new.scala in the RTL directory for options)
+
+These folders are currently used:
+dc-syn: synthesis
+icc-dp, icc-par: place-and-route
+
+These folders were used in MIM experiments and are currently unmaintained:
+dc-dyn.tile
+dc-syn.top
+dc-syn.top.hier
+idd-par.tile
+icc-par.top
+
+These folders aren't used at all (yet):
+pt-pwr: power analysis
+vcs-sim-gl-par: gate-level testbenches
+vcs-sim-gl-syn: gate-level testbenches
+vcs-sim-rtl: verilog testbenches

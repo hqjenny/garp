@@ -1,0 +1,7 @@
+*~
+generated-rams
+generated-src
+/Makefrag-lib
+uk-lib-link.log
+/lib
+/network.conn

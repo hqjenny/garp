@@ -1,0 +1,12 @@
+Ben Keller
+4/10/14
+bkeller@eecs.berkeley.edu
+
+Instructions for MIM flow:
+
+1) Run synthesis on tile (dc-syn.tile)
+2) Run synthesis on top (dc-syn.top)
+3) Run floorplanning on top (icc-dp)
+4) Run P&R on tile (icc-par.tile)
+5) Run synthesis on top with tile macro (dc.syn.top.hier)
+6) Run P&R on top with tile macro (icc.top)

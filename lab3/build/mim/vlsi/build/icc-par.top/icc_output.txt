@@ -1,0 +1,52 @@
+icc_shell> gui_start
+Information: Visibility is turned ON for cells and cell contents because the task is set to Block Implementation (GUI-026)
+icc_shell> cd current-icc/
+icc_shell> source icc_setup.tcl
+Warning: Top library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/TestBlockModule_LIB' in reference library control file is inconsistent with current library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB'. (MW-212)
+
+------------------- Internal Reference Library Settings -----------------
+
+Library    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/GarpAccel_LIB
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_hvt/milkyway/saed32nm_hvt_1p9m
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_rvt/milkyway/saed32nm_rvt_1p9m
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_lvt/milkyway/saed32nm_lvt_1p9m
+  Reference    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/generated-rams/sram8t17x64.mw
+  Reference    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB
+
+Library    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_hvt/milkyway/saed32nm_hvt_1p9m
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_rvt/milkyway/saed32nm_rvt_1p9m
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_lvt/milkyway/saed32nm_lvt_1p9m
+  Reference    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/generated-rams/sram8t17x64.mw
+
+
+------------------- Control File Reference Library Settings -----------
+Warning: Top library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/TestBlockModule_LIB' in reference library control file is inconsistent with current library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB'. (MW-212)
+
+Library    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/GarpAccel_LIB
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_hvt/milkyway/saed32nm_hvt_1p9m
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_rvt/milkyway/saed32nm_rvt_1p9m
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_lvt/milkyway/saed32nm_lvt_1p9m
+  Reference    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/generated-rams/sram8t17x64.mw
+  Reference    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB
+
+Library    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_hvt/milkyway/saed32nm_hvt_1p9m
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_rvt/milkyway/saed32nm_rvt_1p9m
+  Reference    /home/ff/cs250/fa10/stdcells/synopsys-32nm/vendor/lib/stdcell_lvt/milkyway/saed32nm_lvt_1p9m
+  Reference    /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/generated-rams/sram8t17x64.mw
+-------------------------------------------------------------------------
+
+icc_shell> 
+Warning: Top library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/TestBlockModule_LIB' in reference library control file is inconsistent with current library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB'. (MW-212)
+Warning: Top library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/TestBlockModule_LIB' in reference library control file is inconsistent with current library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB'. (MW-212)
+Warning: Top library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/TestBlockModule_LIB' in reference library control file is inconsistent with current library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB'. (MW-212)
+icc_shell> open_mw_lib /home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/current-icc/GarpAccel_LIB
+Warning: Top library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/TestBlockModule_LIB' in reference library control file is inconsistent with current library path '/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.tile/build-icc-2016-04-28_03-12/TestBlockModule_LIB'. (MW-212)
+{GarpAccel_LIB}
+icc_shell> open_mw_cel change_names_icc
+Preparing data for query................... 
+Warning: Conflict unit found: MW tech file resistance unit is kOhm; Main Library resistance unit is MOhm. (IFS-007)
+Information: Opened "change_names_icc.CEL;1" from "/home/cc/cs250/sp16/class/cs250-ai/garp/lab3/build/flo-vlsi/vlsi/build/icc-par.top/build-icc-2016-04-28_03-01/GarpAccel_LIB" library. (MWUI-068)
+icc_shell> 
+Exit IC Compiler!

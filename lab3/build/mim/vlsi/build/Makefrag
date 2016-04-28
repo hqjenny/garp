@@ -1,0 +1,187 @@
+#=======================================================================
+# UCB VLSI FLOW: Process Technology Makefile fragment
+#-----------------------------------------------------------------------
+# Yunsup Lee (yunsup@cs.berkeley.edu)
+#
+# This makefile fragment will select which standard cell library you
+# will be using.
+#
+
+# Assumptions: The Makefile that includes this Makefrag
+#  should have defined base_dir, build_dir
+#  should have included $(base_dir)/Makefrag
+
+ifndef TARGET
+  TARGET = NewFixGrid
+endif
+
+ifeq (${TARGET}, Fix)
+  TOP = TestBlockModule
+  TOP_HARNESS = undef #fixTileTestHarness
+  TOP_INST = undef #fixTile
+  rtl_path = $(base_dir)/flo/src/main/scala
+  CHISEL_CMD = cd $(base_dir)/flo && sbt "project flo" "run fix-5-stage-tile --backend v --targetDir $(build_dir)/generated-src --noInlineMem"
+endif
+
+ifeq (${TARGET}, NewFixGrid)
+  ifndef PORTS
+    PORTS = grid
+  endif
+  ifndef ARRAY
+    ARRAY = grid
+  endif
+  ifndef ROWS
+    export ROWS = 2 
+  endif
+  ifndef COLS
+    export COLS = 2
+  endif
+  TOP = GarpAccel
+  #TOP = FixNetwork2d
+  TOP_HARNESS = undef
+  TOP_INST = $(TOP)
+  rtl_path = $(base_dir)/flo/src/main/scala
+  CHISEL_CMD = cd $(base_dir)/flo && sbt -mem 16384 "project flo" "run new-fix-grid --rows $(ROWS) --cols $(COLS) --ports $(PORTS) --array $(ARRAY) --portsDump $(build_dir)/network.conn --backend v --targetDir $(build_dir)/generated-src --noInlineMem"
+  # Name the tile for MIM flow
+  TILE = TestBlockModule
+  TILE_CELLS = TestBlockModule $(addprefix TestBlockModule_, $(shell seq 1 $$((${ROWS}*${COLS}-1))))
+endif
+
+# [stevo]: set tile and gap dimensions here, and everything else is auto-calculated
+export TILE_WIDTH = 260
+export TILE_HEIGHT = 260
+# [stevo]: if this is too small, ICC will not route between the tiles because the channels are too small
+# 20 is too small, 30 is big enough (not sure about sizes between those)
+export TILE_GAP = 30
+
+clock_period = 0.8
+clock_uncertainty = 0.04
+
+vcs_clock_period = 0$(shell echo "scale=4; ${clock_period}*0.5" | bc)
+dc_clock_period = 0$(shell echo "scale=4; ${clock_period}*1.0" | bc)
+
+input_delay = 0.1
+output_delay = 0.1
+
+#? load libraries
+#STK_name = $(shell cat $(UCDPRJDIR)/.ucdprod | grep SynopsysTechnoKit | awk '{print $$1}')
+#STK_version = $(shell cat $(UCDPRJDIR)/.ucdprod | grep SynopsysTechnoKit | awk '{print $$2}')
+#lib:
+#ifndef UCDPRJDIR
+#	@echo "Error: Need to source st28nm_tech_include/sourceme.sh"
+#else
+#	uk-lib-link -libpack lib -force
+#	ln -s $(FDSOI28_DIR)/prods/$(STK_name)/$(STK_version) lib/SynopsysTechnoKit
+#endif
+
+
+# ST28nm tech
+#filler_cells = C12T28SOI_LL_FILLERPFOP64 C12T28SOI_LL_FILLERPFOP32 C12T28SOI_LL_FILLERPFOP16 C12T28SOI_LL_FILLERPFOP8 C12T28SOI_LL_FILLERPFOP4 C12T28SOI_LL_FILLERPFOP2 C12T28SOI_LL_FILLERCELL1
+filler_cells = SHFILL1 SHFILL2 SHFILL3 SHFILL64 SHFILL128
+
+stdcells_dir = $(UCB_VLSI_HOME)/stdcells/$(UCB_STDCELLS)
+cells_v_dir = $(stdcells_dir)/verilog
+cells_db_dir = $(stdcells_dir)/db
+cells_mw_dir = $(stdcells_dir)/mw
+
+cells_v = \
+  $(cells_v_dir)/cells_hvt.v \
+  $(cells_v_dir)/cells_rvt.v \
+  $(cells_v_dir)/cells_lvt.v \
+
+cells_db = \
+        $(cells_db_dir)/cells_hvt.db \
+        $(cells_db_dir)/cells_rvt.db \
+        $(cells_db_dir)/cells_lvt.db \
+
+cells_mw = \
+  $(cells_mw_dir)/cells_hvt.mw \
+  $(cells_mw_dir)/cells_rvt.mw \
+  $(cells_mw_dir)/cells_lvt.mw \
+
+test:   
+	echo $(cells_db)
+
+srams = \
+        sram8t17x64 \
+
+sram_dir = $(build_dir)/generated-rams
+srams_dir = $(sram_dir)
+srams_db_dir = $(srams_dir)
+srams_v  = $(foreach sram,$(srams),$(sram_dir)/$(sram).v)
+srams_pd_log = $(foreach sram,$(srams),$(sram_dir)/$(sram).pd.log)
+# This target is a way to ensure db and mw built at same time
+srams_db = $(foreach sram,$(srams),$(sram_dir)/$(sram).db)
+srams_mw = $(foreach sram,$(srams),$(sram_dir)/$(sram).mw)
+
+$(srams_db): %.db: %.pd.log
+$(srams_mw): %.mw: %.pd.log
+
+cacti = $(base_dir)/ucbsc/cacti65/cacti
+
+techfile_dir=$(stdcells_dir)/techfile
+techfile = $(techfile_dir)/techfile.tf
+tluplus_dir=$(stdcells_dir)/tluplus
+#cells_ss_corner = ss28_0.90V_0.00V_0.00V_0.00V_125C
+#cells_ff_corner = ff28_1.15V_0.00V_0.00V_0.00V_m40C
+#srams_ss_corner = ss28_0.90V_0.90V_125C_RCMAX
+#srams_ff_corner = ff28_1.10V_1.10V_m40C_RCMIN
+
+#?cells_libs = \
+#	C28SOI_SC_12_CORE_LL \
+#	C28SOI_SC_12_CLK_LL \
+#	C28SOI_SC_12_PR_LL \
+
+#?srams_libs = \
+#	SPREGLVDR \
+
+#cells_db = \
+#    C28SOI_SC_12_CORE_LL_ff28_1.15V_0.00V_0.00V_0.00V_m40C.db \
+#    C28SOI_SC_12_CORE_LL_tt28_1.00V_0.00V_0.00V_0.00V_25C.db \
+#    C28SOI_SC_12_CORE_LL_ss28_0.90V_0.00V_0.00V_0.00V_125C.db \
+#    C28SOI_SC_12_PR_LL_ff28_1.15V_0.00V_0.00V_0.00V_m40C.db \
+#    C28SOI_SC_12_PR_LL_tt28_1.00V_0.00V_0.00V_0.00V_25C.db \
+#    C28SOI_SC_12_PR_LL_ss28_0.90V_0.00V_0.00V_0.00V_125C.db \
+#    C28SOI_SC_12_CLK_LL_ff28_1.15V_0.00V_0.00V_0.00V_m40C.db \
+#    C28SOI_SC_12_CLK_LL_tt28_1.00V_0.00V_0.00V_0.00V_25C.db \
+#    C28SOI_SC_12_CLK_LL_ss28_0.90V_0.00V_0.00V_0.00V_125C.db \
+
+#srams_db = \
+#	SPREGLVDR_ff28_1.10V_1.10V_m40C_RCMIN.db \
+#	SPREGLVDR_tt28_1.00V_1.00V_25C_RCTYP.db \
+#	SPREGLVDR_ss28_0.90V_0.90V_125C_RCMAX.db \
+
+
+# no need to change these
+#cells_db_dir = $(foreach lib, $(cells_libs), $(build_dir)/lib/$(lib)/ccs)
+#srams_db_dir = $(foreach lib, $(srams_libs), $(build_dir)/lib/$(lib)/libs)
+#cells_v = $(foreach lib, $(cells_libs), $(build_dir)/lib/$(lib)/behaviour/verilog/$(lib).v)
+#srams_v = $(foreach lib, $(srams_libs), $(build_dir)/lib/$(lib)/behaviour/verilog/$(lib).v)
+#cells_mw = $(foreach lib, $(cells_libs), $(build_dir)/lib/$(lib)/SYNOPSYS/LAYOUT/$(lib)_CEL $(build_dir)/lib/$(lib)/SYNOPSYS/PR/$(lib))
+#srams_mw = $(foreach lib, $(srams_libs), $(build_dir)/lib/$(lib)/SYNOPSYS/LAYOUT/$(lib)_CEL $(build_dir)/lib/$(lib)/SYNOPSYS/PR/$(lib))
+#?unittile_mw = $(build_dir)/lib/SynopsysTechnoKit/COMMON/UnitTile/unitTile_12T
+
+#cells_min_library = $(foreach lib, $(cells_libs), $(lib)_$(cells_ff_corner).db $(lib)_$(cells_ss_corner).db)
+#srams_min_library = $(foreach lib, $(srams_libs), $(lib)_$(srams_ff_corner).db $(lib)_$(srams_ss_corner).db)
+
+
+#techfile = $(build_dir)/lib/SynopsysTechnoKit/COMMON/tech_zrt.12T.tf
+#tluplus_dir  = $(build_dir)/lib/SynopsysTechnoKit/TLUPLUS
+
+
+#$(build_dir)/generated-src/$(TOP).v: $(wildcard $(rtl_path)/*.scala)
+	#$(CHISEL_CMD)
+	#cd $(build_dir)/generated-src && \
+	#? generate mem	
+	#if [ -a $(TOP).conf ]; then \
+	#	sed -i 's*^*$(vlsi_dir)/src/vlsi_mem_gen *' $(TOP).conf && \
+	#	sed -i 's*$$* >> $(TOP).v*' $(TOP).conf && \
+	#	sh $(TOP).conf; \
+	#else \
+	#	echo "Can't find run vlsi_mem_gen script" && \
+	#	exit 1; \
+	#fi \
+
+top: $(build_dir)/generated-src/$(TOP).v
+
+.PHONY: lib
