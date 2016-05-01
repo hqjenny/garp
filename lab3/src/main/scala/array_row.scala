@@ -29,7 +29,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     val H_wire_above =  Vec.fill(33){Bits(INPUT, width=W)}
 
     // Assume 1 mem bus is allowed
-    val mem_bus_in = Vec.fill(23){Bits(INPUT, width=W)}
+    val mem_bus_in = Vec.fill(24){Bits(INPUT, width=W)}
 
     // H output of the block immediately above 
     val H_out_above =  Vec.fill(23){Bits(INPUT, width=W)}
@@ -40,16 +40,28 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     // 33 H Wires per row, 11 rows, 2 is not driven by anything  
     val H_wire_below =  Vec.fill(33){Bits(OUTPUT, width=W)}
 
+    // Control port
+    val row_en = Bits(INPUT, width=1)
+
+
     // Port for testing 
-    val config = Vec.fill(24){Bits(INPUT, width=64)}
+    /*val config = Vec.fill(24){Bits(INPUT, width=64)}
     val Z_in = Vec.fill(23){Bits(INPUT, width=W)}
     val D_in = Vec.fill(23){Bits(INPUT, width=W)}
     val Z_out = Vec.fill(23){Bits(OUTPUT, width=W)}
     val D_out = Vec.fill(23){Bits(OUTPUT, width=W)}
-    val test = Bool(INPUT)
+    val test = Bool(INPUT)*/
 
     // Assume 1 mem bus is allowed
-    val mem_bus_out = Vec.fill(23){Bits(OUTPUT, width=W)}
+    val mem_bus_out = Vec.fill(24){Bits(OUTPUT, width=W)}
+  }
+
+  val config = Vec.fill(24){Bits(width=64)}
+  val CM = Vec.fill(24){Module(new ConfigurationModule()).io}
+  for(i <-0 until 24){
+    CM(i).en := io.row_en
+    CM(i).in := io.mem_bus_in(i) 
+    config(i) := CM(i).out
   }
 
   //printf("index%d\n", UInt(I));
@@ -115,8 +127,8 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     LB(i).carry_in := LB(i-1).carry_out
   }
 
-  // config just for testing
-  CB.config := io.config(0)
+  // TEST config just for testing
+  /*CB.config := io.config(0)
   for (i <- 0 until 23) {
     // 22 - 0 : 1 - 23
     LB(22-i).config := io.config(i+1)
@@ -129,7 +141,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     LB(i).test := io.test
     io.Z_out(i) := LB(i).Z_out
     io.D_out(i) := LB(i).D_out
-  }
+  }*/
 
   for (i <- 0 until 23) {
     LB(i).mem_D_or_Z := CB.mem_D_or_Z

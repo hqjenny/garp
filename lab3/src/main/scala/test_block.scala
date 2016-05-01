@@ -9,10 +9,10 @@ class TestBlockModule(val W: Int=2) extends Module {
     val out = Bits(OUTPUT, width=W) 
   }
 
-  val tsb = Module(new TSBufferBlackBox(W)).io
-  tsb.in :=  io.in 
-  tsb.en := io.sel(0)
-  io.out := tsb.out
+  //val tsb = Module(new TSBufferBlackBox(W)).io
+  //tsb.in :=  io.in 
+  //tsb.en := io.sel(0)
+  io.out := io.in & io.sel
 
   /*io.out := Bits(0)
   for(i <- 0 until 2){

@@ -9,17 +9,17 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   
 
   val io = new Bundle {
-    val in = Vec.fill(R){Bits(INPUT, width=W)} 
+    /*val in = Vec.fill(R){Bits(INPUT, width=W)} 
     val sel =Vec.fill(R){Bits(INPUT, width=2)}
     val out =Vec.fill(R){Bits(OUTPUT, width=W)}
-    
+    */
     val config = Vec(24 * R, Bits(INPUT, width=64))
     val Z_in = Vec(23 * R, Bits(INPUT, width=W))
     val D_in = Vec(23 * R, Bits(INPUT, width=W))
     val Z_out = Vec(23 * R, Bits(OUTPUT, width=W))
     val D_out = Vec(23 * R, Bits(OUTPUT, width=W))
     val test = Bool(INPUT)
-
+  
   }
 
   /*val test = Vec.fill(R){Module(new TestBlockModule()).io}
@@ -29,6 +29,7 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     io.out(i) := test(i).out  
   }*/
 
+  
   // i is mapped to module's index
   //val garp_array = Seq.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
   //val garp_array = Vec.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
