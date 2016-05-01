@@ -35,11 +35,11 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
 
     // Configuration
     val config = Bits(INPUT, width=64)
-    val Z_in = Bits(INPUT, width=W)
-    val D_in = Bits(INPUT, width=W)
-    val Z_out = Bits(OUTPUT, width=W)
-    val D_out = Bits(OUTPUT, width=W)
-    val test = Bool(INPUT)
+    //val Z_in = Bits(INPUT, width=W)
+    //val D_in = Bits(INPUT, width=W)
+    //val Z_out = Bits(OUTPUT, width=W)
+    //val D_out = Bits(OUTPUT, width=W)
+    //val test = Bool(INPUT)
 
     val mem_bus_out = Bits(OUTPUT, width=W)
     val V_wire_out = Bits(OUTPUT, width=W)
@@ -203,22 +203,24 @@ class LogicBlockModule(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4)
 
     // Z_sel might not be the best indicator 
     // Alternatively, a register can be bypassed on output, in which case it never latches except when it is written to via a memory bus.
-  when(Z_sel){
+  when(Z_sel || store_Z.toBool){
     Z_reg := Z_reg_in
-  }.elsewhen(io.test){
-    Z_reg := io.Z_in
   }
-  when(D_sel){
+  //.elsewhen(io.test){
+  //  Z_reg := io.Z_in
+  //}
+  when(D_sel || store_D.toBool){
     D_reg := D_reg_in
-  }.elsewhen(io.test){
-    D_reg := io.D_in
   }
+  //.elsewhen(io.test){
+  //  D_reg := io.D_in
+  //}
 
   //printf("logic_block in:%d %d\n", io.Z_in, io.D_in)
   //printf("logic_block reg_in:%d %d\n", Z_reg_in, D_reg_in)
   //printf("logic_block:%d %d\n", Z_reg, D_reg)
-  io.Z_out := Z_reg
-  io.D_out := D_reg
+  //io.Z_out := Z_reg
+  //io.D_out := D_reg
 
   io.mem_bus_out := Mux(io.mem_D_or_Z.toBool, D_reg, Z_reg)
   

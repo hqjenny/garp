@@ -55,7 +55,6 @@ class ControlMuxModule extends Module {
   }
 }
 
-
 // TODO: Constants need to be discussed
 class ControlBlockModule extends Module {
   val io = new Bundle { 

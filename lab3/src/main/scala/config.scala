@@ -15,7 +15,6 @@ class ConfigAddrDecoder() extends Module {
   }
 }
 
-
 class ConfigurationModule(val W: Int=2) extends Module {
   val io = new Bundle {
     val in = Bits(INPUT, width=W) 

@@ -13,12 +13,18 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     val sel =Vec.fill(R){Bits(INPUT, width=2)}
     val out =Vec.fill(R){Bits(OUTPUT, width=W)}
     */
-    val config = Vec(24 * R, Bits(INPUT, width=64))
+
+    /*val config = Vec(24 * R, Bits(INPUT, width=64))
     val Z_in = Vec(23 * R, Bits(INPUT, width=W))
     val D_in = Vec(23 * R, Bits(INPUT, width=W))
     val Z_out = Vec(23 * R, Bits(OUTPUT, width=W))
     val D_out = Vec(23 * R, Bits(OUTPUT, width=W))
-    val test = Bool(INPUT)
+    val test = Bool(INPUT)*/
+
+    val mem_bus_in = Vec.fill(24){Bits(INPUT, width=W)}
+    val mem_bus_out = Vec.fill(24){Bits(OUTPUT, width=W)}
+    // Row number 
+    val addr = Bits(INPUT, width=5)
   
   }
 
@@ -29,7 +35,12 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     io.out(i) := test(i).out  
   }*/
 
+  val config_decoder = Module(new ConfigAddrDecoder).io
+  config_decoder.addr := io.addr
   
+  val row_en = Bits(width=32)
+  row_en := config_decoder.en
+ 
   // i is mapped to module's index
   //val garp_array = Seq.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
   //val garp_array = Vec.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
@@ -54,12 +65,13 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
 
       }
     }
+    rows(i).row_en := row_en(i)
   }
   //for (i <- 0 until 23){
   //  rows(0).mem_bus_in := Bits(0)
   //}
 
-  rows(0).mem_bus_in := Vec.fill(23){Bits(width=W)}
+  rows(0).mem_bus_in := io.mem_bus_in
   rows(0).H_out_above :=  Vec.fill(23){Bits(width=W)} 
   rows(0).G_wire_above :=  Vec.fill(G){Bits(width=W)}
   rows(0).H_wire_above :=  Vec.fill(33){Bits(width=W)}
@@ -72,7 +84,8 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     rows(i).H_out_above := rows(i-1).H_out
   }
   
-  for(i <- 0 until R){
+  io.mem_bus_out := rows(R-1).mem_bus_out
+  /*for(i <- 0 until R){
     rows(i).test := io.test
     for (j <- 0 until 24){
       rows(i).config(j) := io.config(24 * i + j)
@@ -84,7 +97,7 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
       io.Z_out(23 * i + j) := rows(i).Z_out(j)
       io.D_out(23 * i + j) := rows(i).D_out(j)
     }
-  }
+  }*/
       
   /*val io = new Bundle { 
     // 16 2-bit input

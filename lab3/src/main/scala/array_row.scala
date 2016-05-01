@@ -41,8 +41,10 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     val H_wire_below =  Vec.fill(33){Bits(OUTPUT, width=W)}
 
     // Control port
+    // Configuration time and load data time 
     val row_en = Bits(INPUT, width=1)
-
+    val config_or_load = Bits(INPUT, width=1)
+    val D_or_Z = Bits(INPUT, width=1)
 
     // Port for testing 
     /*val config = Vec.fill(24){Bits(INPUT, width=64)}
@@ -58,8 +60,8 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
 
   val config = Vec.fill(24){Bits(width=64)}
   val CM = Vec.fill(24){Module(new ConfigurationModule()).io}
-  for(i <-0 until 24){
-    CM(i).en := io.row_en
+  for(i <- 0 until 24){
+    CM(i).en := io.row_en & io.config_or_load
     CM(i).in := io.mem_bus_in(i) 
     config(i) := CM(i).out
   }
@@ -111,7 +113,7 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
       LB(i).H_wire_below_in(j) := H_wire_below(22-i+j)
     }
   }
-
+  
   // mem_bus_in
   for (i <- 0 until 23) {
     LB(i).mem_bus_in := io.mem_bus_in(i)
@@ -127,6 +129,14 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     LB(i).carry_in := LB(i-1).carry_out
   }
 
+  // Read 
+  // CB <- 23
+  CB.config := config(23)
+  for(i <- 0 until 23) {
+    // 22 - 0 : 22 - 0
+    LB(i).config := config(i)
+  }
+  
   // TEST config just for testing
   /*CB.config := io.config(0)
   for (i <- 0 until 23) {
@@ -144,8 +154,8 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
   }*/
 
   for (i <- 0 until 23) {
-    LB(i).mem_D_or_Z := CB.mem_D_or_Z
-    LB(i).store_en := CB.store_transfer_access
+    LB(i).mem_D_or_Z := Mux ((io.row_en.toBool && ~io.config_or_load.toBool), io.D_or_Z ,CB.mem_D_or_Z)
+    LB(i).store_en := CB.store_transfer_access & io.row_en & ~io.config_or_load
   }
   // Like the G wires, each H wire can be driven by a logic block from above the wire and can be read by any block above or below the wire.
   // JENNY not sure why the index is reversed
