@@ -1,0 +1,6 @@
+[submodule "flo"]
+	path = flo
+	url = git@github.com:ucb-bar/flo.git
+[submodule "st28nm_tech_include"]
+	path = st28nm_tech_include
+	url = git@bwrcrepo.eecs.berkeley.edu:raven/st28nm_tech_include.git

@@ -1,0 +1,10 @@
+VLSI tool flow for DREAMER.
+
+This project uses git submodules. Make sure they are properly initialized before starting.
+Run this command: git submodule update --init --recursive
+You will need access to these GitHub repos:
+https://github.com/ucb-bar/flo
+
+The top level directory has these folders:
+flo (submodule): DREAMER RTL repository.
+vlsi: ASIC tool scripts. To build the DREAMER ASIC, see the README in vlsi/build.

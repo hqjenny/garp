@@ -1,0 +1,5 @@
+flo-vlsi/vlsi/build/dc-syn.top/Makefrag:	set HIERARCHICAL_CELLS          "$(notdir $(TILE_CELLS))";\n \
+flo-vlsi/vlsi/build/icc-dp/Makefrag:  set HIERARCHICAL_CELLS          "$(notdir $(TILE_CELLS))";\n \
+flo-vlsi/vlsi/build/dc-syn.top.phy/Makefrag:	set HIERARCHICAL_CELLS          "$(notdir $(TILE_CELLS))";\n \
+flo-vlsi/vlsi/build/icc-par.top/Makefrag:  set HIERARCHICAL_CELLS          "$(notdir $(TILE_CELLS))";\n \
+flo-vlsi/vlsi/build/Makefrag:  TILE_CELLS = $(addprefix TestBlockModule_, $(shell seq 0 $$((${ROWS}*${COLS}-1))))

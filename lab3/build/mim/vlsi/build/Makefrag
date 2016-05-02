@@ -16,7 +16,7 @@ ifndef TARGET
 endif
 
 ifeq (${TARGET}, Fix)
-  TOP = TestBlockModule
+  TOP = ArrayRowModule
   TOP_HARNESS = undef #fixTileTestHarness
   TOP_INST = undef #fixTile
   rtl_path = $(base_dir)/flo/src/main/scala
@@ -43,8 +43,8 @@ ifeq (${TARGET}, NewFixGrid)
   rtl_path = $(base_dir)/flo/src/main/scala
   CHISEL_CMD = cd $(base_dir)/flo && sbt -mem 16384 "project flo" "run new-fix-grid --rows $(ROWS) --cols $(COLS) --ports $(PORTS) --array $(ARRAY) --portsDump $(build_dir)/network.conn --backend v --targetDir $(build_dir)/generated-src --noInlineMem"
   # Name the tile for MIM flow
-  TILE = TestBlockModule
-  TILE_CELLS = TestBlockModule $(addprefix TestBlockModule_, $(shell seq 1 $$((${ROWS}*${COLS}-1))))
+  TILE = ArrayRowModule
+  TILE_CELLS = ArrayRowModule $(addprefix ArrayRowModule_, $(shell seq 1 $$((${ROWS}*${COLS}-1))))
 endif
 
 # [stevo]: set tile and gap dimensions here, and everything else is auto-calculated
@@ -54,7 +54,7 @@ export TILE_HEIGHT = 260
 # 20 is too small, 30 is big enough (not sure about sizes between those)
 export TILE_GAP = 30
 
-clock_period = 0.8
+clock_period = 10
 clock_uncertainty = 0.04
 
 vcs_clock_period = 0$(shell echo "scale=4; ${clock_period}*0.5" | bc)

@@ -1,0 +1,57 @@
+*
+* file: change_names_icc.VDD.pw_hl.pna
+* version: G-2012.06-ICC-SP3
+* time: Tue Mar 15 16:44:11 2016
+* size: 0 0 309896 309288 1.50
+* r_num: 8
+* v_threshold: 0.00
+* em_threshold: 11 0.00
+* em_threshold: 12 0.00
+* em_threshold: 13 0.00
+* em_threshold: 14 0.00
+* em_threshold: 15 0.00
+* em_threshold: 16 0.00
+* em_threshold: 17 0.00
+* em_threshold: 18 0.00
+* em_threshold: 19 0.00
+* em_threshold: 20 0.00
+* em_threshold: 21 0.00
+* em_threshold: 22 0.00
+* em_threshold: 23 0.00
+* em_threshold: 24 0.00
+* em_threshold: 25 0.00
+* em_threshold: 26 0.00
+* em_threshold: 27 0.00
+* em_threshold: 41 0.00
+* total_layer: 42
+* layer_data: 42 VIARDL via9 0
+* layer_data: 41 MRDL metal10 10
+* layer_data: 27 M9 metal9 9
+* layer_data: 26 VIA8 via8 0
+* layer_data: 25 M8 metal8 8
+* layer_data: 24 VIA7 via7 0
+* layer_data: 23 M7 metal7 7
+* layer_data: 22 VIA6 via6 0
+* layer_data: 21 M6 metal6 6
+* layer_data: 20 VIA5 via5 0
+* layer_data: 19 M5 metal5 5
+* layer_data: 18 VIA4 via4 0
+* layer_data: 17 M4 metal4 4
+* layer_data: 16 VIA3 via3 0
+* layer_data: 15 M3 metal3 3
+* layer_data: 14 VIA2 via2 0
+* layer_data: 13 M2 metal2 2
+* layer_data: 12 VIA1 via1 0
+* layer_data: 11 M1 metal1 1
+*
+*# res_id res_value ir_color em_color drop_value current_value em_value layer width x y x1 y1 current_flow res_type voltage1 voltage2
+*
+unit : mV for IR, (A/cm or A/cm_square) for EM
+# 0 0.00000e+00 0 0 0.00000e+00 0.00000e+00 0.00000e+00 19 1250 2750 305913 307146 305913 0 0 1.50000e+00 1.50000e+00
+# 1 0.00000e+00 0 0 0.00000e+00 0.00000e+00 0.00000e+00 19 1250 2750 3375 307146 3375 0 0 1.50000e+00 1.50000e+00
+# 2 0.00000e+00 0 0 0.00000e+00 0.00000e+00 0.00000e+00 17 1250 3375 306538 3375 2750 0 0 1.50000e+00 1.50000e+00
+# 3 0.00000e+00 0 0 0.00000e+00 0.00000e+00 0.00000e+00 17 1250 306521 306538 306521 2750 0 0 1.50000e+00 1.50000e+00
+# 4 0.00000e+00 0 0 1.00000e+03 0.00000e+00 0.00000e+00 19 1250 1000 307663 308896 307663 0 0 1.50000e+00 1.50000e+00
+# 5 0.00000e+00 0 0 1.00000e+03 0.00000e+00 0.00000e+00 19 1250 1000 1625 308896 1625 0 0 1.50000e+00 1.50000e+00
+# 6 0.00000e+00 0 0 1.00000e+03 0.00000e+00 0.00000e+00 17 1250 1625 308288 1625 1000 0 0 1.50000e+00 1.50000e+00
+# 7 0.00000e+00 0 0 1.00000e+03 0.00000e+00 0.00000e+00 17 1250 308271 308288 308271 1000 0 0 1.50000e+00 1.50000e+00

@@ -4,6 +4,7 @@ set_clock_uncertainty ${CLOCK_UNCERTAINTY} [get_clocks clk]
 
 # set drive strength for inputs
 #set_driving_cell -lib_cell C12T28SOI_LL_IVX4_P0 [all_inputs]
+set_driving_cell -lib_cell INVX1_RVT [all_inputs]
 # set load capacitance of outputs
 set_load -pin_load 0.004 [all_outputs]
 
