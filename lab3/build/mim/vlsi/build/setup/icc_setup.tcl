@@ -299,7 +299,7 @@ set ICC_DP_USE_ZROUTE                   TRUE            ;# TRUE|FALSE; use zrout
 set CUSTOM_ICC_DP_PNS_CONSTRAINT_SCRIPT ""              ;# File to add PNS constraints which is loaded before running PNS
 set PNS_POWER_NETS         		"${MW_POWER_NET} ${MW_GROUND_NET}" ;# Target nets for PNS; syntax is "your_power_net your_ground_net"
 set PNS_POWER_BUDGET       		10          	;# Unit in milliWatts; default is 1000
-set PNS_VOLTAGE_SUPPLY     		1.00           	;# Unit in Volts; default is 1.5
+set PNS_VOLTAGE_SUPPLY     		1.05           	;# Unit in Volts; default is 1.5
 #YUNSUP: add virtual rail layer
 set PNS_VIRTUAL_RAIL_LAYER 		"M1"              ;# Specify the metal layer you want to use as virtual rail
 set PNS_OUTPUT_DIR         		"./pna_output"  ;# Output directory for PNS and PNA output files

@@ -54,7 +54,7 @@ export TILE_HEIGHT = 260
 # 20 is too small, 30 is big enough (not sure about sizes between those)
 export TILE_GAP = 30
 
-clock_period = 10
+clock_period = 1000
 clock_uncertainty = 0.04
 
 vcs_clock_period = 0$(shell echo "scale=4; ${clock_period}*0.5" | bc)
