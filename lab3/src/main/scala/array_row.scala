@@ -58,11 +58,6 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     // Assume 1 mem bus is allowed
     val mem_bus_out = Vec.fill(24){Bits(OUTPUT, width=W)}
   }
-
-  CB.config_en := io.row_en & io.config_or_load
-  for(i <- 0 until 23){
-    LB(i).config_en := io.row_en & io.config_or_load
-  }
   //val config = Vec.fill(24){Bits(width=64)}
   /*val CM = Vec.fill(24){Module(new ConfigurationModule()).io}
   for(i <- 0 until 24){
@@ -133,6 +128,11 @@ class ArrayRowModule (val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, 
     LB(i).shift_X_in := LB(i-1).shift_X_out
     LB(i).shift_carry_in := LB(i-1).shift_carry_out
     LB(i).carry_in := LB(i-1).carry_out
+  }
+
+  CB.config_en := io.row_en & io.config_or_load
+  for(i <- 0 until 23){
+    LB(i).config_en := io.row_en & io.config_or_load
   }
 
   // Read 
