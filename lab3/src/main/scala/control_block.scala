@@ -61,7 +61,10 @@ class ControlBlockModule extends Module {
     val H_wire_above_in = Vec.fill(9){Bits(INPUT, width=2)}
     val H_wire_below_in = Vec.fill(9){Bits(INPUT, width=2)}
     // Configuration
-    val config = Bits(INPUT, width=64)
+    val config_en = Bits(INPUT, width=1)
+
+    val mem_bus_in = Bits(INPUT, width=2)
+    //val config = Bits(INPUT, width=64)
 
    // Output Control
 
@@ -80,6 +83,11 @@ class ControlBlockModule extends Module {
     val mem_D_or_Z = Bits(OUTPUT, width=1)
   }
 
+  val CM = Module(new ConfigurationModule()).io
+  CM.en := io.config_en
+  CM.in := io.mem_bus_in
+  val config = CM.out
+
   // Control Signals
   val A_prime = Bool()
   val B_prime = Bool()
@@ -90,13 +98,13 @@ class ControlBlockModule extends Module {
   val primes = Vec.fill(4){Bits(width=2)}
 
   // Configuration encoding
-  val mode = io.config(2,0)
-  io.Hdir := io.config(4,3)
+  val mode = config(2,0)
+  io.Hdir := config(4,3)
   //TODO: Use mode_specific fields
-  val mode_specific_field = io.config(31,5)
+  val mode_specific_field = config(31,5)
   for (i <- 0 until 4) {
-    indexes(i) := io.config(63 - (i * 8), 58 - (i * 8))
-    primes(i) := io.config(57 - (i * 8), 56 - (i * 8))
+    indexes(i) := config(63 - (i * 8), 58 - (i * 8))
+    primes(i) := config(57 - (i * 8), 56 - (i * 8))
     
   }
 
@@ -151,24 +159,24 @@ class ControlBlockModule extends Module {
   // 10 - read/write, cache allocate
   // 11 - read/write, no cache allocate 
   val demand_access_type = Bits(width=2)
-  demand_access_type := io.config(31,30)
+  demand_access_type := config(31,30)
 
   //0 -> 7: 1 -> 8 cycles 
   val delay = Bits(width=3)
-  delay := io.config(26,24)
+  delay := config(26,24)
 
   // 0 -> 8 bits; 1 -> 16 bits; 2 -> 32 bits
   val size_a = Bits(width=2)
-  size_a := io.config(23,22)
+  size_a := config(23,22)
 
   // aligned address? can be ignored for now?
   val N = Bits(width=1)
-  N := io.config(21)
+  N := config(21)
 
   // Demand access 1, 2, 4 words, but we only have 1 memory bus
   // Assert K to be 0 
   val K = Bits(width=2)
-  K := io.config(17,16)
+  K := config(17,16)
   assert ((K === Bits(0, width=2)), "We only have 1 memory bus!\n")
 
   // If D' is 0 at that time, the access will be a read; otherwise it will be either a write or a prefetch, depending on the configuration.
@@ -186,17 +194,17 @@ class ControlBlockModule extends Module {
   // 0 -> 8 bits; 1 -> 16 bits; 2 -> 32 bits
   // col 4->7; col 4->11; col 4->19
   val size_r = Bits(width=2)
-  size_r := io.config(15,14)
+  size_r := config(15,14)
 
   // 0 -> Z reg; 1 -> D reg ; mem_D_or_Z for logic block
   val R = Bits(width=1)
-  R := io.config(13)
+  R := config(13)
   io.mem_D_or_Z := R
 
   // bus 0 - 3 
   // we only have one bus for now 
   val bus = Bits(width=2)
-  bus := io.config(9,8)
+  bus := config(9,8)
   assert(bus === Bits(0, width=2), "We only have memory bus 0!\n")
  
 

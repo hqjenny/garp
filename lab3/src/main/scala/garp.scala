@@ -21,8 +21,21 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     val D_out = Vec(23 * R, Bits(OUTPUT, width=W))
     val test = Bool(INPUT)*/
 
+    // Data bus 
     val mem_bus_in = Vec.fill(24){Bits(INPUT, width=W)}
     val mem_bus_out = Vec.fill(24){Bits(OUTPUT, width=W)}
+ 
+    // Configuration time and load data time 
+    val read_or_write = Bits(INPUT, width=1)
+    val config_or_load = Bits(INPUT, width=1)
+    val D_or_Z = Bits(INPUT, width=1)
+
+
+    // addr is the index of row 
+    // 1. Loading config: read_or_write = 1,  config_or_load = 1
+    // 2. Preloading reg Z or D: read_or_write = 1, config_or_load = 0; D: D_or_Z = 1  ; Z: D_or_Z = 0 
+    // 3. Output from blocks writes to bus: read_or_write = 0, D_or_Z = D:Z
+
     // Row number 
     val addr = Bits(INPUT, width=5)
   
@@ -66,6 +79,9 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
       }
     }
     rows(i).row_en := row_en(i)
+    rows(i).read_or_write := io.read_or_write
+    rows(i).config_or_load := io.config_or_load
+    rows(i).D_or_Z := io.D_or_Z
   }
   //for (i <- 0 until 23){
   //  rows(0).mem_bus_in := Bits(0)
@@ -80,11 +96,25 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   for(i <- 1 until R){
     rows(i).G_wire_above := rows(i-1).G_wire_below
     rows(i).H_wire_above := rows(i-1).H_wire_below
-    rows(i).mem_bus_in := rows(i-1).mem_bus_out
+    //rows(i).mem_bus_in := rows(i-1).mem_bus_out
+    rows(i).mem_bus_in := io.mem_bus_in
     rows(i).H_out_above := rows(i-1).H_out
   }
   
-  io.mem_bus_out := rows(R-1).mem_bus_out
+
+  //val rows = Vec.fill(R){Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=8)).io}
+  // mem bus tri state buffer
+  val mem_bus = Vec.fill(23){Module(new VwireBlackBox(W=2, L=R)).io}
+
+  for(i <- 0 until 23){
+    for(j <- 0 until R) {
+      mem_bus(i).in(j) := rows(i).mem_bus_out(j)
+      mem_bus(i).en(j) := row_en(j)
+    }
+
+    io.mem_bus_out := mem_bus(i).out
+  }
+
   /*for(i <- 0 until R){
     rows(i).test := io.test
     for (j <- 0 until 24){
