@@ -48,6 +48,11 @@ set_output_delay ${OUTPUT_DELAY} -clock [get_clocks clk] [all_outputs]
 set_isolate_ports [all_outputs] -type buffer
 set_isolate_ports [remove_from_collection [all_inputs] clk] -type buffer -force
 
+#set_false_path -from [get_pins {*}]
+
+set_false_path -from [get_nets {io_config*}]
+set_disable_timing get_nets {io_config*}
+
 # set_optimize_registers true -design IntToFP -clock clk -check_design -verbose -print_critical_loop -justification_effort high -minimum_period_only -sync_transform decompose
 # set_optimize_registers true -design FPUSFMAPipe -clock clk -check_design -verbose -print_critical_loop -justification_effort high -minimum_period_only -sync_transform decompose
 # set_optimize_registers true -design FPUDFMAPipe -clock clk -check_design -verbose -print_critical_loop -justification_effort high -minimum_period_only -sync_transform decompose
