@@ -108,11 +108,11 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
 
   for(i <- 0 until 23){
     for(j <- 0 until R) {
-      mem_bus(i).in(j) := rows(i).mem_bus_out(j)
+      mem_bus(i).in(j) := rows(j).mem_bus_out(i)
       mem_bus(i).en(j) := row_en(j)
     }
 
-    io.mem_bus_out := mem_bus(i).out
+    io.mem_bus_out(i) := mem_bus(i).out
   }
 
   /*for(i <- 0 until R){
