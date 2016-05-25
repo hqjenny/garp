@@ -41,30 +41,93 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
   
   }
 
-  /*val test = Vec.fill(R){Module(new TestBlockModule()).io}
-  for(i <- 0 until R){
-    test(i).in := io.in(i)
-    test(i).sel := io.sel(i)
-    io.out(i) := test(i).out  
-  }*/
+  // R rows of 1 control blocks
+  val CB = Vec.fill(R){Module(new ControlBlockModule()).io}
 
-  val config_decoder = Module(new ConfigAddrDecoder).io
-  config_decoder.addr := io.addr
+  // R rows of 23 logic blocks
+  val LB = Vec.fill(R){Vec.fill(23){Module(new LogicBlockModule()).io}}
+
+
+  // --------------- V wires ---------------- //
+
+  val V_wire_en = Vec.fill(R){Vec.fill(23){Bits(width=V)}}
+  for(r <- 0 until R){
+    for(i <- 0 until 23){
+      V_wire_en(r)(i) := Bits(0)
+    }
+
+    for (i <- 0 until 23) {
+      when (LB(r)(i).config_V_out(4).toBool) {
+        switch(LB(r)(i).config_V_out(3,0)) {
+          for(j <- 0 until V) {
+            is(Bits(j, width=4)) {
+              // j: 0 -> 3 en: 3 -> 0
+              //V_wire_en(15-j)(i) := Bits(x=1, width=1)
+              V_wire_en(r)(i)(15-j) := Bits(x=1, width=1)
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Enable driver to a specific V wire, each block has 16 wires 
+  val V_wire_block = Module(new VwireModule(R=R)).io
+
+  val V_wire_out = Vec.fill(R){Vec.fill(23*V){Bits(OUTPUT, width=W)}}
+  for (i <- 0 until R){
+  // For each row
+    for (j <- 0 until 23){
+      for (k <- 0 until V ) {
+        // For row i, col j, wire k
+        V_wire_block.VwirePorts(i)(j)(k).in := LB(i)(j).V_wire_out(k)
+        V_wire_block.VwirePorts(i)(j)(k).en := V_wire_en(i)(j)(k)
+        LB(i)(j).V_wire_in(k) := V_wire_block.VwirePorts(i)(j)(k).out 
+
+      }
+    }
+  }
+
+  val V_wire_en = Vec.fill(23){Bits(width=V)}
+  // V wires
+  for(i <- 0 until 23){
+    V_wire_en(i) := Bits(0)
+  }
+
+  for (i <- 0 until 23) {
+    when (LB(i).config_V_out(4).toBool) {
+      switch(LB(i).config_V_out(3,0)) {
+        for(j <- 0 until V) {
+          is(Bits(j, width=4)) {
+            // j: 0 -> 3 en: 3 -> 0
+            //V_wire_en(15-j)(i) := Bits(x=1, width=1)
+            V_wire_en(i)(15-j) := Bits(x=1, width=1)
+          }
+        }
+      }
+    }
+  }
+ 
+
+
+
+  // Address Decoder for loading config/reg
+  val addr_decoder = Module(new ConfigAddrDecoder).io
+  addr_decoder.addr := io.addr
   
   val row_en = Bits(width=32)
-  row_en := config_decoder.en
+  row_en := addr_decoder.en
  
+
+
+
   // i is mapped to module's index
-  //val garp_array = Seq.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
-  //val garp_array = Vec.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index))}
-  //val garp_array = Vec.fill(R){Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=8))}
   val rows = Vec.tabulate(R){index => Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=index)).io}
   //val rows = Vec.fill(R){Module(new ArrayRowModule(W=W, V=V, H=H, G=G, I=8)).io}
    
   // Haven't figure out how to connect them 
   //val V_wire_in = Vec.fill(23*V){Bits(width=W)}
 
-  val V_wire_block = Module(new VwireModule(R=R)).io
   //val VwirePorts  = Vec.fill(R){Vec.fill(C){Vec.fill(V){new BusPort(W)}}}
        
   for (i <- 0 until R){
@@ -115,60 +178,7 @@ class GarpAccel(val W: Int=2, val V: Int=16, val H: Int=11, val G: Int=4, val R:
     io.mem_bus_out := mem_bus(i).out
   }
 
-  /*for(i <- 0 until R){
-    rows(i).test := io.test
-    for (j <- 0 until 24){
-      rows(i).config(j) := io.config(24 * i + j)
-    }
 
-    for (j <- 0 until 23){
-      rows(i).Z_in(j) := io.Z_in(23 * i + j)
-      rows(i).D_in(j) := io.D_in(23 * i + j)
-      io.Z_out(23 * i + j) := rows(i).Z_out(j)
-      io.D_out(23 * i + j) := rows(i).D_out(j)
-    }
-  }*/
-      
-  /*val io = new Bundle { 
-    // 16 2-bit input
-    val V_wire_in = Vec.fill(V){Bits(INPUT, width=W)}
-    val H_wire_above_in = Vec.fill(H){Bits(INPUT, width=W)}
-    val H_wire_below_in = Vec.fill(H){Bits(INPUT, width=W)}
-    val G_wire_above_in = Vec.fill(G){Bits(INPUT, width=W)}
-    val G_wire_below_in = Vec.fill(G){Bits(INPUT, width=W)}
-    val mem_bus_in = Bits(INPUT, width=W)
-
-    // Shift_A_in, Shift_B_in, Shift_C_in
-    val shift_X_in = Vec.fill(3){Bits(INPUT, width=1)}
-
-    // Hout Above
-    val H_out_above = Bits(INPUT, width=W)
-
-    val shift_carry_in = Bits(INPUT, width=1)
-    val carry_in = Bits(INPUT, width=1)
-
-    // Shift_A_out, Shift_B_out, Shift_C_out
-    val shift_X_out = Vec.fill(3){Bits(OUTPUT, width=1)}
-    val shift_carry_out = Bits(OUTPUT, width=1)
-    val carry_out = Bits(OUTPUT, width=1)
-
-    // Control 
-    // From control block config C' and D', whether access memory and Z or D
-    val store_en = Bits(INPUT, width=1)
-    val mem_D_or_Z = Bits(INPUT, width=1) // 0 = Z, 1 = D
-
-    // Configuration
-    val config = Bits(INPUT, width=64)
-
-    val mem_bus_out = Bits(OUTPUT, width=W)
-    val V_wire_out = Bits(OUTPUT, width=W)
-    val H_wire_out = Bits(OUTPUT, width=W)
-    val G_wire_out = Bits(OUTPUT, width=W)
-
-  }
-
-  val LB = Module(new LogicBlockModule)
-  io <> LB.io*/ 
 }
 
   
